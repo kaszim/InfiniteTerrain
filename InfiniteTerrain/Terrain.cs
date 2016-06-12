@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace InfiniteTerrain
 {
@@ -13,7 +14,7 @@ namespace InfiniteTerrain
     /// </summary>
     class Terrain
     {
-        private Texture2D texture;
+        QuadTree quadTree;
         // The games graphicsdevice.
         private GraphicsDevice graphicsDevice;
         // The spritebatch for this terrain instance.
@@ -30,25 +31,8 @@ namespace InfiniteTerrain
             this.width = width;
             this.height = height;
 
-            texture = new Texture2D(graphicsDevice, width, height);
-            Color[] colors = new Color[width * height];
-            for(int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    colors[x + y * height] = Color.Green;
-                }
-            }
-            for (int x = 100; x < width; x++)
-            {
-                for (int y = 0; y < 100; y++)
-                {
-                    colors[x + y * height] = Color.Wheat;
-                }
-            }
-            texture.SetData<Color>(colors);
-
             spriteBatch = new SpriteBatch(graphicsDevice);
+            quadTree = new QuadTree(graphicsDevice, new Rectangle(0, 0, 500, 500), QuadTreeType.Texture);
         }
 
         /// <summary>
@@ -57,7 +41,11 @@ namespace InfiniteTerrain
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public void Update(GameTime gameTime)
         {
-            
+            var mouseState = Mouse.GetState();
+            if (mouseState.LeftButton == ButtonState.Pressed)
+                quadTree.Insert(new Rectangle(mouseState.X-50, mouseState.Y-50, 100, 100), QuadTreeType.Empty);
+            else if (mouseState.RightButton == ButtonState.Pressed)
+                quadTree.Insert(new Rectangle(mouseState.X - 50, mouseState.Y - 50, 100, 100), QuadTreeType.Texture);
         }
 
         /// <summary>
@@ -67,7 +55,7 @@ namespace InfiniteTerrain
         public void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(texture, Vector2.Zero, Color.White);
+            quadTree.Draw(spriteBatch);
             spriteBatch.End();
         }
     }
