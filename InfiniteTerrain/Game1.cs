@@ -11,6 +11,7 @@ namespace InfiniteTerrain
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Terrain terrain;
 
         public Game1()
         {
@@ -40,7 +41,7 @@ namespace InfiniteTerrain
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            terrain = new Terrain(GraphicsDevice, 500,500);
         }
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace InfiniteTerrain
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            terrain.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -75,7 +76,7 @@ namespace InfiniteTerrain
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            terrain.Draw(gameTime);
 
             base.Draw(gameTime);
         }
