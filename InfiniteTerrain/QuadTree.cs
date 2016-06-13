@@ -26,10 +26,7 @@ namespace InfiniteTerrain
         // Wether or not this node is a leaf.
         private bool isLeaf
         {
-            get
-            {
-                return children == null;
-            }
+            get { return children == null; }
         }
 
         /// <summary>
