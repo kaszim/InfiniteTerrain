@@ -48,7 +48,7 @@ namespace InfiniteTerrain
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            terrain = new Terrain(GraphicsDevice, 500,500);
+            terrain = new Terrain(GraphicsDevice, 1000,500);
         }
 
         /// <summary>

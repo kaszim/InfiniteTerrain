@@ -16,13 +16,18 @@ namespace InfiniteTerrain
     {
         Texture2D texture;
         Texture2D texture2;
-        private const int chunkWidth = 560;
-        private const int chunkHeight = 300;
+        private readonly int chunkWidth;
+        private readonly int chunkHeight;
+        // The maximum number of chunks that fit into the screen horizontally
+        private readonly int nChunksHorizontal;
+        // The maximum number of chunks that fit into the screen vertically
+        private readonly int nChunksVertical;
         // The games graphicsdevice.
         private GraphicsDevice graphicsDevice;
         // The spritebatch for this terrain instance.
         private SpriteBatch spriteBatch;
         private List<List<TerrainChunk>> chunks;
+        // in chunks
         private int width;
         private int height;
 
@@ -100,9 +105,15 @@ namespace InfiniteTerrain
         public Terrain(GraphicsDevice graphicsDevice, int width, int height)
         {
             this.graphicsDevice = graphicsDevice;
-            this.width = width;
-            this.height = height;
+            chunkWidth = Camera.Size.X / 2;
+            chunkHeight = Camera.Size.Y / 2;
+            this.width = (int)Math.Ceiling((double)width/chunkWidth);
+            this.height = (int)Math.Ceiling((double)height /chunkHeight);
             spriteBatch = new SpriteBatch(graphicsDevice);
+            nChunksHorizontal = (int)Math.Ceiling((double)Camera.Size.X / chunkWidth) + 1;
+            nChunksVertical = (int)Math.Ceiling((double)Camera.Size.Y / chunkHeight) + 1;
+
+            // Placeholder
             texture = new Texture2D(graphicsDevice, 100, 100);
             texture2 = new Texture2D(graphicsDevice, 100, 100);
             Color[] colors = new Color[texture.Width * texture.Height];
@@ -117,26 +128,39 @@ namespace InfiniteTerrain
             }
             texture.SetData(colors);
             texture2.SetData(colors2);
+
             // Initialize the chunk dictionary
             chunks = new List<List<TerrainChunk>>();
-            for (int x = 0; x < 50; x++)
+            for (int x = 0; x < this.width; x++)
             {
                 chunks.Add(new List<TerrainChunk>());
-                for (int y = 0; y < 50; y++)
+                for (int y = 0; y < this.height; y++)
                 {
                     chunks[x].Add(new TerrainChunk(graphicsDevice, new Rectangle(x * chunkWidth, y * chunkHeight, chunkWidth, chunkHeight)));
                 }
             }
         }
 
+        /// <summary>
+        /// Does something with on every visible chunk.
+        /// </summary>
+        /// <param name="action">The action to apply.</param>
         private void forEachVisibleChunk(Action<TerrainChunk> action)
         {
-            var chunksHori = Math.Ceiling((double)Camera.Size.X / chunkWidth) + 1;
-            var chunksVert = Math.Ceiling((double)Camera.Size.Y / chunkHeight) + 1;
             var currCHori = (int)Camera.Position.X / chunkWidth;
             var currCVert = (int)Camera.Position.Y / chunkHeight;
-            var lastChunkHori = Math.Min(currCHori + chunksHori, 50);
-            var lastChunkVert = Math.Min(currCVert + chunksVert, 50);
+            var lastChunkHori = currCHori + nChunksHorizontal;
+            var lastChunkVert = currCVert + nChunksVertical;
+
+            if (currCHori < 0)
+                currCHori = 0;
+            else if (lastChunkHori > width)
+                lastChunkHori = chunks.Count;
+            if (currCVert < 0)
+                currCVert = 0;
+            else if (lastChunkVert > height)
+                lastChunkVert = chunks[0].Count;
+            
             for (int x = currCHori; x < lastChunkHori; x++)
                 for (int y = currCVert; y < lastChunkVert; y++)
                     action(chunks[x][y]);
