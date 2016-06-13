@@ -110,6 +110,7 @@ namespace InfiniteTerrain
         {
             spriteBatch.Begin();
             tChunk.Draw(spriteBatch, Vector2.Zero);
+            quadTree.Draw(spriteBatch);
             spriteBatch.End();
         }
     }

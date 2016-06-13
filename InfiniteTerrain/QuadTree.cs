@@ -57,28 +57,6 @@ namespace InfiniteTerrain
         {
         }
 
-        public void Insert(Rectangle modifierRectangle, QuadTreeType newType)
-        {
-            if (modifierRectangle.Contains(rectangle))
-            {
-                type = newType;
-                children = null; // No children are needed if it is fully contained.
-                return;
-            }
-            else if(modifierRectangle.Intersects(rectangle))
-            {
-                // Dont go smaller than a certain value.
-                if (rectangle.Width <= 5)
-                    return;
-                // If this is a leaf, split it up to contain the whole modifier rectangle.
-                if(isLeaf)
-                    split();
-
-                foreach (var child in children)
-                    child.Insert(modifierRectangle, newType);
-            }
-        }
-
         private void split()
         {
             children = new QuadTree[4];
@@ -88,6 +66,53 @@ namespace InfiniteTerrain
             children[1] = new QuadTree(new Rectangle(rectangle.X + halfWidth, rectangle.Y, halfWidth, halfHeight), type);
             children[2] = new QuadTree(new Rectangle(rectangle.X, rectangle.Y + halfHeight, halfWidth, halfHeight), type);
             children[3] = new QuadTree(new Rectangle(rectangle.X + halfWidth, rectangle.Y + halfHeight, halfWidth, halfHeight), type);
+        }
+
+        private void clean()
+        {
+            if(!isLeaf && children[0].isLeaf)
+            {
+                var firstType = children[0].type;
+                for(int i = 1; i < 4; i++)
+                {
+                    if (!children[i].isLeaf)
+                        return;
+                    if(firstType != children[i].type)
+                        return;
+                }
+                type = children[0].type;
+                children = null;
+            }
+        }
+
+        public void Insert(Rectangle modifierRectangle, QuadTreeType newType)
+        {
+            if (modifierRectangle.Contains(rectangle))
+            {
+                type = newType;
+                children = null; // No children are needed if it is fully contained.
+            }
+            else if(modifierRectangle.Intersects(rectangle))
+            {
+                // Dont go smaller than a certain value.
+                if (rectangle.Width <= 5)
+                    return;
+                // If this is a leaf, split it up to contain the whole modifier rectangle.
+                if(isLeaf)
+                    split();
+                foreach (var child in children)
+                    child.Insert(modifierRectangle, newType);
+                // Try to merge quadrants
+                clean();
+            }
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            C3.XNA.Primitives2D.DrawRectangle(spriteBatch, rectangle, Color.Black);
+            if(!isLeaf)
+                foreach (var child in children)
+                    child.Draw(spriteBatch);
         }
     }
 }
