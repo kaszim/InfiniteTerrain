@@ -23,6 +23,7 @@ namespace InfiniteTerrain
             graphics.PreferredBackBufferWidth = 1680;
             graphics.PreferredBackBufferHeight = 900;
             gWindow = Window;
+            IsFixedTimeStep = false;
         }
 
         /// <summary>
