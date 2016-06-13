@@ -15,19 +15,7 @@ namespace InfiniteTerrain
     {
         private Rectangle rectangle;
         private QuadTree[] children;
-        private QuadTreeType internalType;
-        private QuadTreeType type
-        {
-            get
-            {
-                return internalType;
-            }
-            set
-            {
-                
-                internalType = value;
-            }
-        }
+        private QuadTreeType type;
         private bool isLeaf
         {
             get
