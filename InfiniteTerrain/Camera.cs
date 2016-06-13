@@ -24,6 +24,10 @@ namespace InfiniteTerrain
             get { return position; }
             set { position = value; }
         }
+        public static Point Size
+        {
+            get { return size; }
+        }
 
         /// <summary>
         /// Initializes the world camera.

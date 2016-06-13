@@ -16,6 +16,8 @@ namespace InfiniteTerrain
     {
         Texture2D texture;
         Texture2D texture2;
+        private const int chunkWidth = 560;
+        private const int chunkHeight = 300;
         // The games graphicsdevice.
         private GraphicsDevice graphicsDevice;
         // The spritebatch for this terrain instance.
@@ -29,8 +31,8 @@ namespace InfiniteTerrain
         /// </summary>
         class TerrainChunk
         {
-            private GraphicsDevice graphicsDevice;
             private RenderTarget2D renderTarget;
+            private GraphicsDevice graphicsDevice;
             private SpriteBatch spriteBatch;
             private Rectangle rectangle;
             private QuadTree quadTree;
@@ -87,7 +89,7 @@ namespace InfiniteTerrain
             public void Draw(SpriteBatch spriteBatch)
             {
                 // Draws this chunk of terrain to the spritebatch
-                spriteBatch.Draw(renderTarget, Camera.WorldToScreenRectangle(rectangle), Color.White);
+                spriteBatch.Draw(renderTarget, Camera.WorldToScreenPosition(position), Color.White);
                 quadTree.Draw(spriteBatch);
             }
         }
@@ -117,14 +119,27 @@ namespace InfiniteTerrain
             texture2.SetData(colors2);
             // Initialize the chunk dictionary
             chunks = new List<List<TerrainChunk>>();
-            for (int x = 0; x < 5; x++)
+            for (int x = 0; x < 50; x++)
             {
                 chunks.Add(new List<TerrainChunk>());
-                for (int y = 0; y < 5; y++)
+                for (int y = 0; y < 50; y++)
                 {
-                    chunks[x].Add(new TerrainChunk(graphicsDevice, new Rectangle(x * 512, y * 512, 512, 512)));
+                    chunks[x].Add(new TerrainChunk(graphicsDevice, new Rectangle(x * chunkWidth, y * chunkHeight, chunkWidth, chunkHeight)));
                 }
             }
+        }
+
+        private void forEachVisibleChunk(Action<TerrainChunk> action)
+        {
+            var chunksHori = Math.Ceiling((double)Camera.Size.X / chunkWidth) + 1;
+            var chunksVert = Math.Ceiling((double)Camera.Size.Y / chunkHeight) + 1;
+            var currCHori = (int)Camera.Position.X / chunkWidth;
+            var currCVert = (int)Camera.Position.Y / chunkHeight;
+            var lastChunkHori = Math.Min(currCHori + chunksHori, 50);
+            var lastChunkVert = Math.Min(currCVert + chunksVert, 50);
+            for (int x = currCHori; x < lastChunkHori; x++)
+                for (int y = currCVert; y < lastChunkVert; y++)
+                    action(chunks[x][y]);
         }
 
         /// <summary>
@@ -139,11 +154,7 @@ namespace InfiniteTerrain
             {
                 // Get the center of the modifier
                 var center = new Vector2(mousePos.X - (texture.Width >> 1), mousePos.Y - (texture.Height >> 1));
-                foreach (var xbucket in chunks)
-                    foreach (var chunk in xbucket)
-                    {
-                        chunk.Modify(texture, center, QuadTreeType.Empty);
-                    }
+                forEachVisibleChunk((c) => c.Modify(texture, center, QuadTreeType.Empty));
             }
             else if (mouseState.RightButton == ButtonState.Pressed)
             {
@@ -164,11 +175,7 @@ namespace InfiniteTerrain
         public void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            foreach (var xbucket in chunks)
-                foreach (var chunk in xbucket)
-                {
-                    chunk.Draw(spriteBatch);
-                }
+            forEachVisibleChunk((c) => c.Draw(spriteBatch));
             spriteBatch.End();
         }
     }

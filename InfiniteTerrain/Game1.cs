@@ -13,6 +13,8 @@ namespace InfiniteTerrain
         SpriteBatch spriteBatch;
         Terrain terrain;
 
+        public static GameWindow gWindow;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -20,6 +22,7 @@ namespace InfiniteTerrain
             IsMouseVisible = true;
             graphics.PreferredBackBufferWidth = 1680;
             graphics.PreferredBackBufferHeight = 900;
+            gWindow = Window;
         }
 
         /// <summary>
@@ -88,6 +91,7 @@ namespace InfiniteTerrain
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            Window.Title = gameTime.IsRunningSlowly.ToString();
 
             terrain.Draw(gameTime);
 
