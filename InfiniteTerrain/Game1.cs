@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -25,7 +26,6 @@ namespace InfiniteTerrain
             graphics.PreferredBackBufferHeight = 900;
             gWindow = Window;
             IsFixedTimeStep = false;
-            Window.Title = "0";
         }
 
         /// <summary>
@@ -94,7 +94,25 @@ namespace InfiniteTerrain
 
             terrain.Update(gameTime);
             var recs = terrain.GetCollidingRectangles(o.Rectangle, QuadTreeType.Texture);
-            
+            foreach (Rectangle other in recs)
+            {
+                var dCenter = o.Rectangle.Center - other.Center;
+                float dx;
+                float dy;
+                // Check which side we intersect from and calculate the dx accordingly
+                if (dCenter.X > 0)
+                    dx = other.X + other.Size.X - o.Position.X;
+                else
+                    dx = other.X - o.Position.X - o.Rectangle.Width;
+                // same thing here but with dy
+                if (dCenter.Y > 0)
+                    dy = other.Y + other.Size.Y - o.Position.Y;
+                else
+                    dy = other.Y - o.Position.Y - o.Rectangle.Height;
+                // Whichever of the d's are smallest should be solved first, leave the other for next update
+                Vector2 dPos = Math.Abs(dx) > Math.Abs(dy) ? new Vector2(0, dy) : new Vector2(dx, 0);
+                o.Position += dPos;
+            }
 
             base.Update(gameTime);
         }
