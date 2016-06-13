@@ -160,11 +160,7 @@ namespace InfiniteTerrain
             {
                 // Get the center of the modifier
                 var center = new Vector2(mousePos.X - (texture.Width >> 1), mousePos.Y - (texture.Height >> 1));
-                foreach (var xbucket in chunks)
-                    foreach (var chunk in xbucket)
-                    {
-                        chunk.Modify(texture2, center, QuadTreeType.Texture);
-                    }
+                forEachVisibleChunk((c) => c.Modify(texture2, center, QuadTreeType.Texture));
             }
         }
 
