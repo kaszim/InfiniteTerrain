@@ -87,7 +87,7 @@ namespace InfiniteTerrain
             public void Draw(SpriteBatch spriteBatch)
             {
                 // Draws this chunk of terrain to the spritebatch
-                spriteBatch.Draw(renderTarget, rectangle, Color.White);
+                spriteBatch.Draw(renderTarget, Camera.WorldToScreenRectangle(rectangle), Color.White);
                 quadTree.Draw(spriteBatch);
             }
         }
@@ -134,10 +134,11 @@ namespace InfiniteTerrain
         public void Update(GameTime gameTime)
         {
             var mouseState = Mouse.GetState();
+            var mousePos = Camera.ScreenToWorldPosition(new Vector2(mouseState.X, mouseState.Y));
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
                 // Get the center of the modifier
-                var center = new Vector2(mouseState.X - (texture.Width >> 1), mouseState.Y - (texture.Height >> 1));
+                var center = new Vector2(mousePos.X - (texture.Width >> 1), mousePos.Y - (texture.Height >> 1));
                 foreach (var xbucket in chunks)
                     foreach (var chunk in xbucket)
                     {
@@ -147,7 +148,7 @@ namespace InfiniteTerrain
             else if (mouseState.RightButton == ButtonState.Pressed)
             {
                 // Get the center of the modifier
-                var center = new Vector2(mouseState.X - (texture.Width >> 1), mouseState.Y - (texture.Height >> 1));
+                var center = new Vector2(mousePos.X - (texture.Width >> 1), mousePos.Y - (texture.Height >> 1));
                 foreach (var xbucket in chunks)
                     foreach (var chunk in xbucket)
                     {

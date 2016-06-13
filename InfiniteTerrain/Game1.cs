@@ -19,7 +19,7 @@ namespace InfiniteTerrain
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             graphics.PreferredBackBufferWidth = 1680;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferHeight = 900;
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace InfiniteTerrain
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            Camera.Initialize(new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
 
             base.Initialize();
         }
@@ -65,6 +65,16 @@ namespace InfiniteTerrain
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            var keyState = Keyboard.GetState();
+            if (keyState.IsKeyDown(Keys.D))
+                Camera.Position = new Vector2(Camera.Position.X + 10, Camera.Position.Y);
+            if (keyState.IsKeyDown(Keys.A))
+                Camera.Position = new Vector2(Camera.Position.X - 10, Camera.Position.Y);
+            if (keyState.IsKeyDown(Keys.S))
+                Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y + 10);
+            if (keyState.IsKeyDown(Keys.W))
+                Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y - 10);
 
             terrain.Update(gameTime);
 
