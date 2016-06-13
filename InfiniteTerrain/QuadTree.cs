@@ -16,9 +16,7 @@ namespace InfiniteTerrain
 
     class QuadTree
     {
-        private GraphicsDevice graphicsDevice;
         private Rectangle rectangle;
-        private Texture2D texture;
         private QuadTree[] children;
         private QuadTreeType internalType;
         private QuadTreeType type
@@ -49,27 +47,14 @@ namespace InfiniteTerrain
             }
         }
 
-        public QuadTree(GraphicsDevice graphicsDevice, Rectangle boundingRectangle, QuadTreeType type)
+        public QuadTree(Rectangle boundingRectangle, QuadTreeType type)
         {
-            this.graphicsDevice = graphicsDevice;
             rectangle = boundingRectangle;
-            texture = new Texture2D(graphicsDevice, rectangle.Width, rectangle.Height);
             this.type = type;
-            Color[] colors = new Color[texture.Width * texture.Height];
-            Color c = type == QuadTreeType.Empty ? Color.Transparent : Color.Green;
-            for (int x = 0; x < texture.Width; x++)
-            {
-                for (int y = 0; y < texture.Height; y++)
-                {
-                    colors[x + y * texture.Height] = c;
-                }
-            }
-            texture.SetData<Color>(colors);
         }
 
         ~QuadTree()
         {
-            texture.Dispose();
         }
 
         public void Insert(Rectangle modifierRectangle, QuadTreeType newType)
@@ -78,16 +63,6 @@ namespace InfiniteTerrain
             {
                 type = newType;
                 children = null; // No children are needed if it is fully contained.
-                Color[] colors = new Color[texture.Width * texture.Height];
-                Color c = type == QuadTreeType.Empty ? Color.Transparent : Color.Green;
-                for (int x = 0; x < texture.Width; x++)
-                {
-                    for (int y = 0; y < texture.Height; y++)
-                    {
-                        colors[x + y * texture.Height] = c;
-                    }
-                }
-                texture.SetData<Color>(colors);
                 return;
             }
             else if(modifierRectangle.Intersects(rectangle))
@@ -109,21 +84,10 @@ namespace InfiniteTerrain
             children = new QuadTree[4];
             var halfWidth = (int)Math.Ceiling((double)rectangle.Width / 2);
             var halfHeight = (int)Math.Ceiling((double)rectangle.Height / 2);
-            children[0] = new QuadTree(graphicsDevice, new Rectangle(rectangle.X, rectangle.Y, halfWidth, halfHeight), type);
-            children[1] = new QuadTree(graphicsDevice, new Rectangle(rectangle.X + halfWidth, rectangle.Y, halfWidth, halfHeight), type);
-            children[2] = new QuadTree(graphicsDevice, new Rectangle(rectangle.X, rectangle.Y + halfHeight, halfWidth, halfHeight), type);
-            children[3] = new QuadTree(graphicsDevice, new Rectangle(rectangle.X + halfWidth, rectangle.Y + halfHeight, halfWidth, halfHeight), type);
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            if(isLeaf)
-                spriteBatch.Draw(texture, rectangle, Color.White);
-            else
-            {
-                foreach (var child in children)
-                    child.Draw(spriteBatch);
-            }
+            children[0] = new QuadTree(new Rectangle(rectangle.X, rectangle.Y, halfWidth, halfHeight), type);
+            children[1] = new QuadTree(new Rectangle(rectangle.X + halfWidth, rectangle.Y, halfWidth, halfHeight), type);
+            children[2] = new QuadTree(new Rectangle(rectangle.X, rectangle.Y + halfHeight, halfWidth, halfHeight), type);
+            children[3] = new QuadTree(new Rectangle(rectangle.X + halfWidth, rectangle.Y + halfHeight, halfWidth, halfHeight), type);
         }
     }
 }
