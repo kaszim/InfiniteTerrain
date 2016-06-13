@@ -13,9 +13,15 @@ namespace InfiniteTerrain
 
     class QuadTree
     {
+        // The bounding rectangle of this node.
         private Rectangle rectangle;
+        // The children of this node (if it is not a leaf).
         private QuadTree[] children;
+        // The type of this node.
         private QuadTreeType type;
+        // The area of this node.
+        private int area;
+        // Wether or not this node is a leaf.
         private bool isLeaf
         {
             get
@@ -24,24 +30,28 @@ namespace InfiniteTerrain
             }
         }
 
-        public Rectangle Rectangle
-        {
-            get
-            {
-                return rectangle;
-            }
-        }
-
+        /// <summary>
+        /// Constructs a quadtree.
+        /// </summary>
+        /// <param name="boundingRectangle">The rectangle which bounds the whole quadtree.</param>
+        /// <param name="type">The inital type.</param>
         public QuadTree(Rectangle boundingRectangle, QuadTreeType type)
         {
             rectangle = boundingRectangle;
             this.type = type;
+            area = rectangle.Width * rectangle.Height;
         }
 
+        /// <summary>
+        /// Destructor.
+        /// </summary>
         ~QuadTree()
         {
         }
 
+        /// <summary>
+        /// Splits the current node into four child nodes.
+        /// </summary>
         private void split()
         {
             children = new QuadTree[4];
@@ -53,6 +63,9 @@ namespace InfiniteTerrain
             children[3] = new QuadTree(new Rectangle(rectangle.X + halfWidth, rectangle.Y + halfHeight, halfWidth, halfHeight), type);
         }
 
+        /// <summary>
+        /// Tries to clean the current node and all its child nodes.
+        /// </summary>
         private void clean()
         {
             if(!isLeaf && children[0].isLeaf)
@@ -70,6 +83,11 @@ namespace InfiniteTerrain
             }
         }
 
+        /// <summary>
+        /// Inserts a rectangle into the quadtree.
+        /// </summary>
+        /// <param name="modifierRectangle">The rectangle to insert.</param>
+        /// <param name="newType">The type of this rectangle.</param>
         public void Insert(Rectangle modifierRectangle, QuadTreeType newType)
         {
             if (modifierRectangle.Contains(rectangle))
@@ -80,11 +98,12 @@ namespace InfiniteTerrain
             else if(modifierRectangle.Intersects(rectangle))
             {
                 // Dont go smaller than a certain value.
-                if (rectangle.Width <= 5)
+                if (area <= 5)
                     return;
                 // If this is a leaf, split it up to contain the whole modifier rectangle.
                 if(isLeaf)
                     split();
+                // Modify all child nodes instead
                 foreach (var child in children)
                     child.Insert(modifierRectangle, newType);
                 // Try to merge quadrants
@@ -92,6 +111,10 @@ namespace InfiniteTerrain
             }
         }
 
+        /// <summary>
+        /// Draws DEBUG rectangles of the quadtree quadtrants.
+        /// </summary>
+        /// <param name="spriteBatch">The spritebatch to draw to.</param>
         [Conditional("DEBUG")]
         public void Draw(SpriteBatch spriteBatch)
         {
