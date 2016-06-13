@@ -18,6 +18,8 @@ namespace InfiniteTerrain
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            graphics.PreferredBackBufferWidth = 1680;
+            graphics.PreferredBackBufferHeight = 720;
         }
 
         /// <summary>
