@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,7 +15,7 @@ namespace InfiniteTerrain
     class QuadTree
     {
         // The minimum area a node can have.
-        private const int minArea = 4;
+        private const int minArea = 16;
         // The bounding rectangle of this node.
         private Rectangle rectangle;
         // The children of this node (if it is not a leaf).
@@ -79,6 +80,34 @@ namespace InfiniteTerrain
                 }
                 type = children[0].type;
                 children = null;
+            }
+        }
+
+        /// <summary>
+        /// Finds all leaves which collide with the searchRectangle and has the same type.
+        /// </summary>
+        /// <param name="searchRectangle">The rectangle to check against.</param>
+        /// <param name="searchType">The type the leaves have to have.</param>
+        /// <returns>Returns a list of all colliding rectangles.</returns>
+        public List<Rectangle> FindCollidingLeaves(Rectangle searchRectangle, QuadTreeType searchType)
+        {
+            var collidingRectangles = new List<Rectangle>();
+            internalFindCollidingLeaves(ref collidingRectangles, searchRectangle, searchType);
+            return collidingRectangles;
+        }
+
+        private void internalFindCollidingLeaves(ref List<Rectangle> rectangles, Rectangle searchRectangle, QuadTreeType searchType)
+        {
+            if (rectangle.Intersects(searchRectangle))
+            {
+                if (isLeaf)
+                {
+                    if (type == searchType)
+                        rectangles.Add(rectangle);
+                }
+                else
+                    foreach (var child in children)
+                        child.internalFindCollidingLeaves(ref rectangles, searchRectangle, searchType);
             }
         }
 

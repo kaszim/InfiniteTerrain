@@ -87,6 +87,11 @@ namespace InfiniteTerrain
                 quadTree.Insert(new Rectangle((int)position.X, (int)position.Y, modifier.Width, modifier.Height), quadTreeType);
             }
 
+            public List<Rectangle> FindCollidingRectangles(Rectangle searchRectangle, QuadTreeType searchType)
+            {
+                return quadTree.FindCollidingLeaves(searchRectangle, searchType);
+            }
+
             /// <summary>
             /// Draws the terrain chunk to the spritebatch.
             /// </summary>
@@ -164,6 +169,17 @@ namespace InfiniteTerrain
             for (int x = currCHori; x < lastChunkHori; x++)
                 for (int y = currCVert; y < lastChunkVert; y++)
                     action(chunks[x][y]);
+        }
+
+        public List<Rectangle> GetCollidingRectangles(Rectangle searchRectangle, QuadTreeType searchType)
+        {
+            var rectangles = new List<Rectangle>();
+            foreach(var xbucket in chunks)
+                foreach(var chunk in xbucket)
+                {
+                    rectangles.AddRange(chunk.FindCollidingRectangles(searchRectangle, searchType));
+                }
+            return rectangles;
         }
 
         /// <summary>

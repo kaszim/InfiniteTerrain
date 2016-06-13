@@ -12,6 +12,7 @@ namespace InfiniteTerrain
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Terrain terrain;
+        Object o;
 
         public static GameWindow gWindow;
 
@@ -24,6 +25,7 @@ namespace InfiniteTerrain
             graphics.PreferredBackBufferHeight = 900;
             gWindow = Window;
             IsFixedTimeStep = false;
+            Window.Title = "0";
         }
 
         /// <summary>
@@ -35,6 +37,7 @@ namespace InfiniteTerrain
         protected override void Initialize()
         {
             Camera.Initialize(new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+            o = new Object(new Vector2(500, 500), new Point(25, 75));
 
             base.Initialize();
         }
@@ -80,7 +83,18 @@ namespace InfiniteTerrain
             if (keyState.IsKeyDown(Keys.W))
                 Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y - 10);
 
+            if (keyState.IsKeyDown(Keys.Right))
+                o.Position = new Vector2(o.Position.X + 10, o.Position.Y);
+            if (keyState.IsKeyDown(Keys.Left))
+                o.Position = new Vector2(o.Position.X - 10, o.Position.Y);
+            if (keyState.IsKeyDown(Keys.Down))
+                o.Position = new Vector2(o.Position.X, o.Position.Y + 10);
+            if (keyState.IsKeyDown(Keys.Up))
+                o.Position = new Vector2(o.Position.X, o.Position.Y - 10);
+
             terrain.Update(gameTime);
+            var recs = terrain.GetCollidingRectangles(o.Rectangle, QuadTreeType.Texture);
+            
 
             base.Update(gameTime);
         }
@@ -92,9 +106,12 @@ namespace InfiniteTerrain
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            Window.Title = gameTime.IsRunningSlowly.ToString();
+            //Window.Title = gameTime.IsRunningSlowly.ToString();
 
             terrain.Draw(gameTime);
+            spriteBatch.Begin();
+            o.Draw(spriteBatch);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
