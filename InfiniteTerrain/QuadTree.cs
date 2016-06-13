@@ -14,7 +14,7 @@ namespace InfiniteTerrain
     class QuadTree
     {
         // The minimum area a node can have.
-        private const int minArea = 5;
+        private const int minArea = 1;
         // The bounding rectangle of this node.
         private Rectangle rectangle;
         // The children of this node (if it is not a leaf).

@@ -110,10 +110,11 @@ namespace InfiniteTerrain
                 for (int y = 0; y < texture.Height; y++)
                 {
                     colors[x + y * texture.Height] = Color.Transparent;
-                    colors2[x + y * texture.Height] = Color.Green;
+                    colors2[x + y * texture2.Height] = Color.Green;
                 }
             }
             texture.SetData(colors);
+            texture2.SetData(colors2);
             // Initialize the chunk dictionary
             chunks = new List<List<TerrainChunk>>();
             for (int x = 0; x < 5; x++)
