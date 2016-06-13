@@ -24,37 +24,64 @@ namespace InfiniteTerrain
         private int height;
         private TerrainChunk tChunk;
 
+        /// <summary>
+        /// A chunk of terrain.
+        /// </summary>
         class TerrainChunk
         {
             private GraphicsDevice graphicsDevice;
             private RenderTarget2D renderTarget;
             private SpriteBatch spriteBatch;
+            private Vector2 position;
             private int width;
             private int height;
 
-            public TerrainChunk(GraphicsDevice graphicsDevice, int width, int height)
+            /// <summary>
+            /// Creates a terrain chunk.
+            /// </summary>
+            /// <param name="graphicsDevice">The game's graphicsdevice.</param>
+            /// <param name="position">The world position of the chunk.</param>
+            /// <param name="width">Width of the chunk.</param>
+            /// <param name="height">Height of the chunk.</param>
+            public TerrainChunk(GraphicsDevice graphicsDevice, Vector2 position, int width, int height)
             {
                 this.graphicsDevice = graphicsDevice;
+                this.position = position;
                 this.width = width;
                 this.height = height;
                 renderTarget = new RenderTarget2D(graphicsDevice, width, height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
                 spriteBatch = new SpriteBatch(graphicsDevice);
+                // Initialize the rendertarget.
                 graphicsDevice.SetRenderTarget(renderTarget);
                 graphicsDevice.Clear(Color.Green);
                 graphicsDevice.SetRenderTarget(null);
             }
 
+            /// <summary>
+            /// Modifies the chunk of terrain.
+            /// </summary>
+            /// <param name="modifier"></param>
+            /// <param name="position"></param>
             public void Modify(Texture2D modifier, Vector2 position)
             {
+                // Set the rendertarget to this chunk's
                 graphicsDevice.SetRenderTarget(renderTarget);
+                // Begin drawing to the spritebatch, using blendsate.opaque (this blendstate removes previously drawn colors, and only leaves the current drawn ones)
                 spriteBatch.Begin(blendState: BlendState.Opaque);
+                // Draw the modifier texture to the rendertarget.
                 spriteBatch.Draw(modifier, position, Color.White);
                 spriteBatch.End();
+                // Set to the main rendertarget.
                 graphicsDevice.SetRenderTarget(null);
             }
 
-            public void Draw(SpriteBatch spriteBatch, Vector2 position)
+            /// <summary>
+            /// Draws the terrain chunk to the spritebatch.
+            /// </summary>
+            /// <param name="spriteBatch">The spritebatch to draw to.</param>
+            public void Draw(SpriteBatch spriteBatch)
             {
+                // Draws this chunk of terrain to the spritebatch
                 spriteBatch.Draw(renderTarget, position, Color.White);
             }
         }
@@ -80,7 +107,7 @@ namespace InfiniteTerrain
                 }
             }
             texture.SetData(colors);
-            tChunk = new TerrainChunk(graphicsDevice, 500, 500);
+            tChunk = new TerrainChunk(graphicsDevice, Vector2.Zero, 500, 500);
         }
 
         /// <summary>
@@ -109,7 +136,7 @@ namespace InfiniteTerrain
         public void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            tChunk.Draw(spriteBatch, Vector2.Zero);
+            tChunk.Draw(spriteBatch);
             quadTree.Draw(spriteBatch);
             spriteBatch.End();
         }

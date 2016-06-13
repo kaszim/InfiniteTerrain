@@ -13,6 +13,8 @@ namespace InfiniteTerrain
 
     class QuadTree
     {
+        // The minimum area a node can have.
+        private const int minArea = 5;
         // The bounding rectangle of this node.
         private Rectangle rectangle;
         // The children of this node (if it is not a leaf).
@@ -98,7 +100,7 @@ namespace InfiniteTerrain
             else if(modifierRectangle.Intersects(rectangle))
             {
                 // Dont go smaller than a certain value.
-                if (area <= 5)
+                if (area <= minArea)
                     return;
                 // If this is a leaf, split it up to contain the whole modifier rectangle.
                 if(isLeaf)
