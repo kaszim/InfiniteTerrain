@@ -15,13 +15,14 @@ namespace InfiniteTerrain
     class Terrain
     {
         Texture2D texture;
+        Texture2D texture2;
         // The games graphicsdevice.
         private GraphicsDevice graphicsDevice;
         // The spritebatch for this terrain instance.
         private SpriteBatch spriteBatch;
+        private List<List<TerrainChunk>> chunks;
         private int width;
         private int height;
-        private TerrainChunk tChunk;
 
         /// <summary>
         /// A chunk of terrain.
@@ -33,6 +34,7 @@ namespace InfiniteTerrain
             private SpriteBatch spriteBatch;
             private Rectangle rectangle;
             private QuadTree quadTree;
+            private Vector2 position;
 
             /// <summary>
             /// Creates a terrain chunk.
@@ -43,6 +45,7 @@ namespace InfiniteTerrain
             {
                 this.graphicsDevice = graphicsDevice;
                 this.rectangle = rectangle;
+                position = new Vector2(rectangle.X, rectangle.Y);
                 this.quadTree = new QuadTree(rectangle, QuadTreeType.Texture);
                 renderTarget = new RenderTarget2D(graphicsDevice, rectangle.Width, rectangle.Height, false,
                     SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
@@ -57,22 +60,24 @@ namespace InfiniteTerrain
             /// Modifies the chunk of terrain.
             /// </summary>
             /// <param name="modifier"></param>
-            /// <param name="position"></param>
+            /// <param name="position">The external position to modify.</param>
             /// <param name="quadTreeType"></param>
             public void Modify(Texture2D modifier, Vector2 position, QuadTreeType quadTreeType)
             {
+                // Translate the external position to internal
+                var iPos = position - this.position;
                 // Set the rendertarget to this chunk's
                 graphicsDevice.SetRenderTarget(renderTarget);
                 // Begin drawing to the spritebatch, using blendsate.opaque
                 // (this blendstate removes previously drawn colors, and only leaves the current drawn ones)
                 spriteBatch.Begin(blendState: BlendState.Opaque);
                 // Draw the modifier texture to the rendertarget.
-                spriteBatch.Draw(modifier, position, Color.White);
+                spriteBatch.Draw(modifier, iPos, Color.White);
                 spriteBatch.End();
                 // Set to the main rendertarget.
                 graphicsDevice.SetRenderTarget(null);
                 // Insert a modifier rectangle into the quadtree.
-                quadTree.Insert(new Rectangle((int)position.X, (int)position.Y, modifier.Width, modifier.Height), QuadTreeType.Empty);
+                quadTree.Insert(new Rectangle((int)position.X, (int)position.Y, modifier.Width, modifier.Height), quadTreeType);
             }
 
             /// <summary>
@@ -97,17 +102,28 @@ namespace InfiniteTerrain
             this.height = height;
             spriteBatch = new SpriteBatch(graphicsDevice);
             texture = new Texture2D(graphicsDevice, 100, 100);
+            texture2 = new Texture2D(graphicsDevice, 100, 100);
             Color[] colors = new Color[texture.Width * texture.Height];
-            Color c = Color.Transparent;
+            Color[] colors2 = new Color[texture.Width * texture.Height];
             for (int x = 0; x < texture.Width; x++)
             {
                 for (int y = 0; y < texture.Height; y++)
                 {
-                    colors[x + y * texture.Height] = c;
+                    colors[x + y * texture.Height] = Color.Transparent;
+                    colors2[x + y * texture.Height] = Color.Green;
                 }
             }
             texture.SetData(colors);
-            tChunk = new TerrainChunk(graphicsDevice, new Rectangle(0,0, 512, 512));
+            // Initialize the chunk dictionary
+            chunks = new List<List<TerrainChunk>>();
+            for (int x = 0; x < 5; x++)
+            {
+                chunks.Add(new List<TerrainChunk>());
+                for (int y = 0; y < 5; y++)
+                {
+                    chunks[x].Add(new TerrainChunk(graphicsDevice, new Rectangle(x * 512, y * 512, 512, 512)));
+                }
+            }
         }
 
         /// <summary>
@@ -121,13 +137,21 @@ namespace InfiniteTerrain
             {
                 // Get the center of the modifier
                 var center = new Vector2(mouseState.X - (texture.Width >> 1), mouseState.Y - (texture.Height >> 1));
-                tChunk.Modify(texture, center, QuadTreeType.Empty);
+                foreach (var xbucket in chunks)
+                    foreach (var chunk in xbucket)
+                    {
+                        chunk.Modify(texture, center, QuadTreeType.Empty);
+                    }
             }
             else if (mouseState.RightButton == ButtonState.Pressed)
             {
                 // Get the center of the modifier
                 var center = new Vector2(mouseState.X - (texture.Width >> 1), mouseState.Y - (texture.Height >> 1));
-                tChunk.Modify(texture, center, QuadTreeType.Texture);
+                foreach (var xbucket in chunks)
+                    foreach (var chunk in xbucket)
+                    {
+                        chunk.Modify(texture2, center, QuadTreeType.Texture);
+                    }
             }
         }
 
@@ -138,7 +162,11 @@ namespace InfiniteTerrain
         public void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            tChunk.Draw(spriteBatch);
+            foreach (var xbucket in chunks)
+                foreach (var chunk in xbucket)
+                {
+                    chunk.Draw(spriteBatch);
+                }
             spriteBatch.End();
         }
     }
