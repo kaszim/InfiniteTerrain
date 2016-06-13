@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -107,6 +104,7 @@ namespace InfiniteTerrain
             }
         }
 
+        [Conditional("DEBUG")]
         public void Draw(SpriteBatch spriteBatch)
         {
             C3.XNA.Primitives2D.DrawRectangle(spriteBatch, rectangle, Color.Black);
