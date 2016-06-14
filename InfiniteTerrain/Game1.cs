@@ -14,6 +14,7 @@ namespace InfiniteTerrain
         SpriteBatch spriteBatch;
         Terrain terrain;
         Object o;
+        FrameCounter fc;
 
         public static GameWindow gWindow;
 
@@ -26,6 +27,8 @@ namespace InfiniteTerrain
             graphics.PreferredBackBufferHeight = 900;
             gWindow = Window;
             IsFixedTimeStep = false;
+            graphics.SynchronizeWithVerticalRetrace = false;
+            fc = new FrameCounter();
         }
 
         /// <summary>
@@ -51,7 +54,7 @@ namespace InfiniteTerrain
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            terrain = new Terrain(GraphicsDevice, 1000,500);
+            terrain = new Terrain(GraphicsDevice, 10000,5000);
         }
 
         /// <summary>
@@ -73,24 +76,26 @@ namespace InfiniteTerrain
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             var keyState = Keyboard.GetState();
             if (keyState.IsKeyDown(Keys.D))
-                Camera.Position = new Vector2(Camera.Position.X + 10, Camera.Position.Y);
+                Camera.Position = new Vector2(Camera.Position.X + 300*deltaTime, Camera.Position.Y);
             if (keyState.IsKeyDown(Keys.A))
-                Camera.Position = new Vector2(Camera.Position.X - 10, Camera.Position.Y);
+                Camera.Position = new Vector2(Camera.Position.X - 300*deltaTime, Camera.Position.Y);
             if (keyState.IsKeyDown(Keys.S))
-                Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y + 10);
+                Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y + 300*deltaTime);
             if (keyState.IsKeyDown(Keys.W))
-                Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y - 10);
+                Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y - 300 * deltaTime);
 
             if (keyState.IsKeyDown(Keys.Right))
-                o.Position = new Vector2(o.Position.X + 10, o.Position.Y);
+                o.Position = new Vector2(o.Position.X + 100 * deltaTime, o.Position.Y);
             if (keyState.IsKeyDown(Keys.Left))
-                o.Position = new Vector2(o.Position.X - 10, o.Position.Y);
+                o.Position = new Vector2(o.Position.X - 100 * deltaTime, o.Position.Y);
             if (keyState.IsKeyDown(Keys.Down))
-                o.Position = new Vector2(o.Position.X, o.Position.Y + 10);
+                o.Position = new Vector2(o.Position.X, o.Position.Y + 100 * deltaTime);
             if (keyState.IsKeyDown(Keys.Up))
-                o.Position = new Vector2(o.Position.X, o.Position.Y - 10);
+                o.Position = new Vector2(o.Position.X, o.Position.Y - 100 * deltaTime);
 
             terrain.Update(gameTime);
             var recs = terrain.GetCollidingRectangles(o.Rectangle, QuadTreeType.Texture);
@@ -113,7 +118,8 @@ namespace InfiniteTerrain
                 Vector2 dPos = Math.Abs(dx) > Math.Abs(dy) ? new Vector2(0, dy) : new Vector2(dx, 0);
                 o.Position += dPos;
             }
-
+            fc.Update(deltaTime);
+            Window.Title = "FPS " + fc.AverageFramesPerSecond;
             base.Update(gameTime);
         }
 
