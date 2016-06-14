@@ -171,8 +171,15 @@ namespace InfiniteTerrain
                     action(chunks[x][y]);
         }
 
+        /// <summary>
+        /// Returns all rectangles which collides with the search rectangle and has the same type as the searchType
+        /// </summary>
+        /// <param name="searchRectangle">The rectangle to test against.</param>
+        /// <param name="searchType">The QuadTreeType to test against.</param>
+        /// <returns>A list of rectangles in the terrain which collides wiht searchRectangle.</returns>
         public List<Rectangle> GetCollidingRectangles(Rectangle searchRectangle, QuadTreeType searchType)
         {
+            //TODO: Only test against nearby terrainchunks
             var rectangles = new List<Rectangle>();
             foreach(var xbucket in chunks)
                 foreach(var chunk in xbucket)
