@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -88,16 +89,9 @@ namespace InfiniteTerrain
             if (keyState.IsKeyDown(Keys.W))
                 Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y - 300 * deltaTime);
 
-            if (keyState.IsKeyDown(Keys.Right))
-                o.Position = new Vector2(o.Position.X + 100 * deltaTime, o.Position.Y);
-            if (keyState.IsKeyDown(Keys.Left))
-                o.Position = new Vector2(o.Position.X - 100 * deltaTime, o.Position.Y);
-            if (keyState.IsKeyDown(Keys.Down))
-                o.Position = new Vector2(o.Position.X, o.Position.Y + 100 * deltaTime);
-            if (keyState.IsKeyDown(Keys.Up))
-                o.Position = new Vector2(o.Position.X, o.Position.Y - 100 * deltaTime);
 
             terrain.Update(gameTime);
+            o.Update(gameTime);
             var recs = terrain.GetCollidingRectangles(o.Rectangle, QuadTreeType.Texture);
             foreach (Rectangle other in recs)
             {

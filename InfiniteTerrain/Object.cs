@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace InfiniteTerrain
@@ -25,9 +26,20 @@ namespace InfiniteTerrain
             this.size = size;
         }
 
-        public void Update()
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        public void Update(GameTime gameTime)
         {
+            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            var keyState = Keyboard.GetState();
+            if (keyState.IsKeyDown(Keys.Right))
+                position = new Vector2(position.X + 300 * deltaTime, position.Y);
+            if (keyState.IsKeyDown(Keys.Left))
+                position = new Vector2(position.X - 300 * deltaTime, position.Y);
+            if (keyState.IsKeyDown(Keys.Down))
+                position = new Vector2(position.X, position.Y + 300 * deltaTime);
+            if (keyState.IsKeyDown(Keys.Up))
+                position = new Vector2(position.X, position.Y - 300 * deltaTime);
         }
 
         public void Draw(SpriteBatch spriteBatch)
