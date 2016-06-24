@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace InfiniteTerrain
 {
-    class Object
+    class GameObject
     {
         private Vector2 position;
         private Point size;
@@ -20,7 +20,7 @@ namespace InfiniteTerrain
             get { return new Rectangle((int)position.X, (int)position.Y, size.X, size.Y); }
         }
 
-        public Object(Vector2 position, Point size)
+        public GameObject(Vector2 position, Point size)
         {
             this.position = position;
             this.size = size;

@@ -14,7 +14,7 @@ namespace InfiniteTerrain
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Terrain terrain;
-        Object o;
+        GameObject o;
         FrameCounter fc;
 
         public static GameWindow gWindow;
@@ -41,7 +41,7 @@ namespace InfiniteTerrain
         protected override void Initialize()
         {
             Camera.Initialize(new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
-            o = new Object(new Vector2(500, 500), new Point(25, 75));
+            o = new GameObject(new Vector2(500, 500), new Point(25, 75));
 
             base.Initialize();
         }
