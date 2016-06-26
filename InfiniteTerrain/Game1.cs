@@ -40,7 +40,8 @@ namespace InfiniteTerrain
         /// </summary>
         protected override void Initialize()
         {
-            Camera.Initialize(new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+            Camera.Initialize(new Point(graphics.PreferredBackBufferWidth,
+                graphics.PreferredBackBufferHeight));
             o = new GameObject(new Vector2(500, 500), new Point(25, 75));
 
             base.Initialize();
@@ -74,7 +75,8 @@ namespace InfiniteTerrain
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
+                || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -108,7 +110,8 @@ namespace InfiniteTerrain
                     dy = other.Y + other.Size.Y - o.Position.Y;
                 else
                     dy = other.Y - o.Position.Y - o.Rectangle.Height;
-                // Whichever of the d's are smallest should be solved first, leave the other for next update
+                // Whichever of the d's are smallest should be solved first, leave the other for 
+                next update
                 Vector2 dPos = Math.Abs(dx) > Math.Abs(dy) ? new Vector2(0, dy) : new Vector2(dx, 0);
                 o.Position += dPos;
             }

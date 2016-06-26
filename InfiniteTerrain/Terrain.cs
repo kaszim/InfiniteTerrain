@@ -54,7 +54,8 @@ namespace InfiniteTerrain
                 this.rectangle = rectangle;
                 position = new Vector2(rectangle.X, rectangle.Y);
                 this.quadTree = new QuadTree(rectangle, QuadTreeType.Texture);
-                renderTarget = new RenderTarget2D(graphicsDevice, rectangle.Width, rectangle.Height, false,
+                renderTarget = new RenderTarget2D(graphicsDevice, rectangle.Width, rectangle.Height,
+                    false,
                     SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
                 spriteBatch = new SpriteBatch(graphicsDevice);
                 // Initialize the rendertarget.
@@ -84,10 +85,12 @@ namespace InfiniteTerrain
                 // Set to the main rendertarget.
                 graphicsDevice.SetRenderTarget(null);
                 // Insert a modifier rectangle into the quadtree.
-                quadTree.Insert(new Rectangle((int)position.X, (int)position.Y, modifier.Width, modifier.Height), quadTreeType);
+                quadTree.Insert(new Rectangle((int)position.X, (int)position.Y, modifier.Width,
+                    modifier.Height), quadTreeType);
             }
 
-            public List<Rectangle> FindCollidingRectangles(Rectangle searchRectangle, QuadTreeType searchType)
+            public List<Rectangle> FindCollidingRectangles(Rectangle searchRectangle,
+                QuadTreeType searchType)
             {
                 return quadTree.FindCollidingLeaves(searchRectangle, searchType);
             }
@@ -141,7 +144,8 @@ namespace InfiniteTerrain
                 chunks.Add(new List<TerrainChunk>());
                 for (int y = 0; y < this.height; y++)
                 {
-                    chunks[x].Add(new TerrainChunk(graphicsDevice, new Rectangle(x * chunkWidth, y * chunkHeight, chunkWidth, chunkHeight)));
+                    chunks[x].Add(new TerrainChunk(graphicsDevice, new Rectangle(x * chunkWidth,
+                        y * chunkHeight, chunkWidth, chunkHeight)));
                 }
             }
         }
@@ -172,7 +176,8 @@ namespace InfiniteTerrain
         }
 
         /// <summary>
-        /// Returns all rectangles which collides with the search rectangle and has the same type as the searchType
+        /// Returns all rectangles which collides with the search rectangle and
+        /// has the same type as the searchType.
         /// </summary>
         /// <param name="searchRectangle">The rectangle to test against.</param>
         /// <param name="searchType">The QuadTreeType to test against.</param>
