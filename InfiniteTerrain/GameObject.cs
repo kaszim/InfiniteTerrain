@@ -5,12 +5,37 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace InfiniteTerrain
 {
+    interface IWorldObject
+    {
+        /// <summary>
+        /// Initialized the object into the world. 
+        /// Consequently, the terrain field and world field is set.
+        /// </summary>
+        /// <param name="terrain"></param>
+        /// <param name="world"></param>
+        void Initialize(Terrain terrain, World world);
+        /// <summary>
+        /// The world's Terrain.
+        /// </summary>
+        Terrain Terrain
+        {
+            get;
+        }
+        /// <summary>
+        /// The world.
+        /// </summary>
+        World World
+        {
+            get;
+        }
+    }
+
     /// <summary>
     /// A game object.
     /// This class holds information about objects that are in the world.
     /// They collide with the terrain.
     /// </summary>
-    class GameObject
+    class GameObject : IWorldObject
     {
         // Acceleration of this game object
         private float acceleration = 2000f;
@@ -24,6 +49,10 @@ namespace InfiniteTerrain
         private Vector2 velocity;
         // Size of the object
         private Point size;
+        // The World's terrain object
+        private Terrain terrain;
+        // The world
+        private World world;
 
         /// <summary>
         /// The GameObject's position in the world.
@@ -49,10 +78,26 @@ namespace InfiniteTerrain
             get { return new Rectangle((int)position.X, (int)position.Y, size.X, size.Y); }
         }
 
+        Terrain IWorldObject.Terrain
+        {
+            get { return terrain; }
+        }
+
+        World IWorldObject.World
+        {
+            get { return world; }
+        }
+
         public GameObject(Vector2 position, Point size)
         {
             this.position = position;
             this.size = size;
+        }
+
+        void IWorldObject.Initialize(Terrain terrain, World world)
+        {
+            this.terrain = terrain;
+            this.world = world;
         }
 
         /// <summary>
