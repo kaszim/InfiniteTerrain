@@ -51,13 +51,14 @@ namespace InfiniteTerrain
 
         /// <summary>
         /// Translates a world position into a screen position, relative to the camera.
+        /// Note that the returned Vector2's components are also rounded.
         /// Use this function when drawing to the screen.
         /// </summary>
         /// <param name="position">The position to translate.</param>
         /// <returns>The translated position.</returns>
         public static Vector2 WorldToScreenPosition(Vector2 transPosition)
         {
-            return transPosition - position;
+            return Round(transPosition - position);
         }
 
         /// <summary>
@@ -68,8 +69,19 @@ namespace InfiniteTerrain
         /// <returns>The translated rectangle.</returns>
         public static Rectangle WorldToScreenRectangle(Rectangle rectangle)
         {
-            return new Rectangle(rectangle.X - (int)position.X, rectangle.Y - (int)position.Y,
+            return new Rectangle(rectangle.X - (int)Math.Round(position.X),
+                rectangle.Y - (int)Math.Round(position.Y),
                 rectangle.Width, rectangle.Height);
+        }
+
+        /// <summary>
+        /// Rounds a vectors components into integers.
+        /// </summary>
+        /// <param name="vec">The vector to round.</param>
+        /// <returns>A rounded vector with integer components.</returns>
+        private static Vector2 Round(Vector2 vec)
+        {
+            return new Vector2((float)Math.Round(vec.X), (float)Math.Round(vec.Y));
         }
     }
 }
