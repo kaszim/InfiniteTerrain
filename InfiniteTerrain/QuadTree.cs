@@ -57,10 +57,14 @@ namespace InfiniteTerrain
             children = new QuadTree[4];
             var halfWidth = (int)Math.Ceiling((double)rectangle.Width / 2);
             var halfHeight = (int)Math.Ceiling((double)rectangle.Height / 2);
-            children[0] = new QuadTree(new Rectangle(rectangle.X, rectangle.Y, halfWidth, halfHeight), type);
-            children[1] = new QuadTree(new Rectangle(rectangle.X + halfWidth, rectangle.Y, halfWidth, halfHeight), type);
-            children[2] = new QuadTree(new Rectangle(rectangle.X, rectangle.Y + halfHeight, halfWidth, halfHeight), type);
-            children[3] = new QuadTree(new Rectangle(rectangle.X + halfWidth, rectangle.Y + halfHeight, halfWidth, halfHeight), type);
+            children[0] = new QuadTree(new Rectangle(rectangle.X, rectangle.Y, halfWidth,
+                halfHeight), type);
+            children[1] = new QuadTree(new Rectangle(rectangle.X + halfWidth, rectangle.Y,
+                halfWidth, halfHeight), type);
+            children[2] = new QuadTree(new Rectangle(rectangle.X, rectangle.Y + halfHeight,
+                halfWidth, halfHeight), type);
+            children[3] = new QuadTree(new Rectangle(rectangle.X + halfWidth, rectangle.Y + halfHeight,
+                halfWidth, halfHeight), type);
         }
 
         /// <summary>
@@ -96,7 +100,8 @@ namespace InfiniteTerrain
             return collidingRectangles;
         }
 
-        private void internalFindCollidingLeaves(ref List<Rectangle> rectangles, Rectangle searchRectangle, QuadTreeType searchType)
+        private void internalFindCollidingLeaves(ref List<Rectangle> rectangles,
+            Rectangle searchRectangle, QuadTreeType searchType)
         {
             if (rectangle.Intersects(searchRectangle))
             {
@@ -146,7 +151,8 @@ namespace InfiniteTerrain
         [Conditional("DEBUG")]
         public void Draw(SpriteBatch spriteBatch)
         {
-            C3.XNA.Primitives2D.DrawRectangle(spriteBatch, Camera.WorldToScreenRectangle(rectangle), Color.Black);
+            C3.XNA.Primitives2D.DrawRectangle(spriteBatch, Camera.WorldToScreenRectangle(rectangle),
+                Color.Black);
             if(!isLeaf)
                 foreach (var child in children)
                     child.Draw(spriteBatch);
