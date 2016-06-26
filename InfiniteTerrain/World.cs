@@ -5,15 +5,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace InfiniteTerrain
 {
-    class World : GameObject
+    class World
     {
         private GraphicsDevice graphicsDevice;
         private SpriteBatch spriteBatch;
         private Terrain terrain;
         private GameObject o;
 
-        public World(GraphicsDevice graphicsDevice, Vector2 position, Point size)
-            : base(position, size)
+        public World(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
             terrain = new Terrain(graphicsDevice, 10000, 5000);
