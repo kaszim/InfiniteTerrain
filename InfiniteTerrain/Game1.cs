@@ -111,7 +111,7 @@ namespace InfiniteTerrain
                 else
                     dy = other.Y - o.Position.Y - o.Rectangle.Height;
                 // Whichever of the d's are smallest should be solved first, leave the other for 
-                next update
+                // next update
                 Vector2 dPos = Math.Abs(dx) > Math.Abs(dy) ? new Vector2(0, dy) : new Vector2(dx, 0);
                 o.Position += dPos;
             }
