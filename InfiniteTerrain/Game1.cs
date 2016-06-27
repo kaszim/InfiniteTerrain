@@ -11,9 +11,9 @@ namespace InfiniteTerrain
     /// </summary>
     public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
+        readonly GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        FrameCounter fc;
+        readonly FrameCounter fc;
 
         public static GameWindow gWindow;
 
@@ -50,7 +50,6 @@ namespace InfiniteTerrain
         /// </summary>
         protected override void LoadContent()
         {
-            
         }
 
         /// <summary>

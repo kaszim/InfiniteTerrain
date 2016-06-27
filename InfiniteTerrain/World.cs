@@ -7,10 +7,10 @@ namespace InfiniteTerrain
 {
     class World
     {
-        private GraphicsDevice graphicsDevice;
+        private readonly GraphicsDevice graphicsDevice;
         private SpriteBatch spriteBatch;
-        private Terrain terrain;
-        private GameObject o;
+        private readonly Terrain terrain;
+        private readonly GameObject o;
 
         public World(GraphicsDevice graphicsDevice)
         {
@@ -46,9 +46,9 @@ namespace InfiniteTerrain
                     dy = other.Y + other.Size.Y - o.Position.Y;
                 else
                     dy = other.Y - o.Position.Y - o.Rectangle.Height;
-                // Whichever of the d's are smallest should be solved first, leave the other for 
+                // Whichever of the d's are smallest should be solved first, leave the other for
                 // next update
-                Vector2 dPos = Math.Abs(dx) > Math.Abs(dy) ? new Vector2(0, dy) : new Vector2(dx, 0);
+                var dPos = Math.Abs(dx) > Math.Abs(dy) ? new Vector2(0, dy) : new Vector2(dx, 0);
                 o.Position += dPos;
             }
         }

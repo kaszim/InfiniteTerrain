@@ -17,18 +17,15 @@ namespace InfiniteTerrain
         // The minimum area a node can have.
         private const int minArea = 8;
         // The bounding rectangle of this node.
-        private Rectangle rectangle;
+        private readonly Rectangle rectangle;
         // The children of this node (if it is not a leaf).
         private QuadTree[] children;
         // The type of this node.
         private QuadTreeType type;
         // The area of this node.
-        private int area;
+        private readonly int area;
         // Wether or not this node is a leaf.
-        private bool isLeaf
-        {
-            get { return children == null; }
-        }
+        private bool isLeaf => children == null;
 
         /// <summary>
         /// Constructs a quadtree.
@@ -40,13 +37,6 @@ namespace InfiniteTerrain
             rectangle = boundingRectangle;
             this.type = type;
             area = rectangle.Width * rectangle.Height;
-        }
-
-        /// <summary>
-        /// Destructor.
-        /// </summary>
-        ~QuadTree()
-        {
         }
 
         /// <summary>

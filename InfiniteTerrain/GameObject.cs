@@ -8,7 +8,7 @@ namespace InfiniteTerrain
     interface IWorldObject
     {
         /// <summary>
-        /// Initialized the object into the world. 
+        /// Initialized the object into the world.
         /// Consequently, the terrain field and world field is set.
         /// </summary>
         /// <param name="terrain"></param>
@@ -73,20 +73,10 @@ namespace InfiniteTerrain
         /// <summary>
         /// The GameObject's bounding rectangle.
         /// </summary>
-        public Rectangle Rectangle
-        {
-            get { return new Rectangle((int)position.X, (int)position.Y, size.X, size.Y); }
-        }
+        public Rectangle Rectangle => new Rectangle((int)position.X, (int)position.Y, size.X, size.Y);
 
-        Terrain IWorldObject.Terrain
-        {
-            get { return terrain; }
-        }
-
-        World IWorldObject.World
-        {
-            get { return world; }
-        }
+        Terrain IWorldObject.Terrain => terrain;
+        World IWorldObject.World => world;
 
         public GameObject(Vector2 position, Point size)
         {
@@ -123,6 +113,7 @@ namespace InfiniteTerrain
         /// <summary>
         /// Updates physics.
         /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected void updatePhysics(GameTime gameTime)
         {
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;

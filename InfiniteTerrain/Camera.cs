@@ -24,10 +24,7 @@ namespace InfiniteTerrain
             get { return position; }
             set { position = value; }
         }
-        public static Point Size
-        {
-            get { return size; }
-        }
+        public static Point Size => size;
 
         /// <summary>
         /// Initializes the world camera.
@@ -42,24 +39,18 @@ namespace InfiniteTerrain
         /// <summary>
         /// Translates a screen position into a world position, relative to the camera.
         /// </summary>
-        /// <param name="position">The position to translate.</param>
+        /// <param name="transPosition">The position to translate.</param>
         /// <returns>The translated position.</returns>
-        public static Vector2 ScreenToWorldPosition(Vector2 transPosition)
-        {
-            return transPosition + position;
-        }
+        public static Vector2 ScreenToWorldPosition(Vector2 transPosition) => transPosition + position;
 
         /// <summary>
         /// Translates a world position into a screen position, relative to the camera.
         /// Note that the returned Vector2's components are also rounded.
         /// Use this function when drawing to the screen.
         /// </summary>
-        /// <param name="position">The position to translate.</param>
+        /// <param name="transPosition">The position to translate.</param>
         /// <returns>The translated position.</returns>
-        public static Vector2 WorldToScreenPosition(Vector2 transPosition)
-        {
-            return Round(transPosition - position);
-        }
+        public static Vector2 WorldToScreenPosition(Vector2 transPosition) => Round(transPosition - position);
 
         /// <summary>
         /// Translates a world rectangle into a screen rectangle, relative to the camera.
@@ -67,21 +58,16 @@ namespace InfiniteTerrain
         /// </summary>
         /// <param name="rectangle">The rectangle to translate.</param>
         /// <returns>The translated rectangle.</returns>
-        public static Rectangle WorldToScreenRectangle(Rectangle rectangle)
-        {
-            return new Rectangle(rectangle.X - (int)Math.Round(position.X),
+        public static Rectangle WorldToScreenRectangle(Rectangle rectangle) =>
+            new Rectangle(rectangle.X - (int)Math.Round(position.X),
                 rectangle.Y - (int)Math.Round(position.Y),
                 rectangle.Width, rectangle.Height);
-        }
 
         /// <summary>
         /// Rounds a vectors components into integers.
         /// </summary>
         /// <param name="vec">The vector to round.</param>
         /// <returns>A rounded vector with integer components.</returns>
-        private static Vector2 Round(Vector2 vec)
-        {
-            return new Vector2((float)Math.Round(vec.X), (float)Math.Round(vec.Y));
-        }
+        private static Vector2 Round(Vector2 vec) => new Vector2((float)Math.Round(vec.X), (float)Math.Round(vec.Y));
     }
 }

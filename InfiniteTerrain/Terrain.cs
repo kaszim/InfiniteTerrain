@@ -14,8 +14,8 @@ namespace InfiniteTerrain
     /// </summary>
     class Terrain
     {
-        Texture2D texture;
-        Texture2D texture2;
+        readonly Texture2D texture;
+        readonly Texture2D texture2;
         private readonly int chunkWidth;
         private readonly int chunkHeight;
         // The maximum number of chunks that fit into the screen horizontally
@@ -23,25 +23,25 @@ namespace InfiniteTerrain
         // The maximum number of chunks that fit into the screen vertically
         private readonly int nChunksVertical;
         // The games graphicsdevice.
-        private GraphicsDevice graphicsDevice;
+        private readonly GraphicsDevice graphicsDevice;
         // The spritebatch for this terrain instance.
-        private SpriteBatch spriteBatch;
-        private List<List<TerrainChunk>> chunks;
+        private readonly SpriteBatch spriteBatch;
+        private readonly List<List<TerrainChunk>> chunks;
         // in chunks
-        private int width;
-        private int height;
+        private readonly int width;
+        private readonly int height;
 
         /// <summary>
         /// A chunk of terrain.
         /// </summary>
         class TerrainChunk
         {
-            private RenderTarget2D renderTarget;
-            private GraphicsDevice graphicsDevice;
-            private SpriteBatch spriteBatch;
-            private Rectangle rectangle;
-            private QuadTree quadTree;
-            private Vector2 position;
+            private readonly RenderTarget2D renderTarget;
+            private readonly GraphicsDevice graphicsDevice;
+            private readonly SpriteBatch spriteBatch;
+            private readonly Rectangle rectangle;
+            private readonly QuadTree quadTree;
+            private readonly Vector2 position;
 
             /// <summary>
             /// Creates a terrain chunk.
@@ -90,10 +90,7 @@ namespace InfiniteTerrain
             }
 
             public List<Rectangle> FindCollidingRectangles(Rectangle searchRectangle,
-                QuadTreeType searchType)
-            {
-                return quadTree.FindCollidingLeaves(searchRectangle, searchType);
-            }
+                QuadTreeType searchType) => quadTree.FindCollidingLeaves(searchRectangle, searchType);
 
             /// <summary>
             /// Draws the terrain chunk to the spritebatch.
@@ -124,8 +121,8 @@ namespace InfiniteTerrain
             // Placeholder
             texture = new Texture2D(graphicsDevice, 100, 100);
             texture2 = new Texture2D(graphicsDevice, 100, 100);
-            Color[] colors = new Color[texture.Width * texture.Height];
-            Color[] colors2 = new Color[texture.Width * texture.Height];
+            var colors = new Color[texture.Width * texture.Height];
+            var colors2 = new Color[texture.Width * texture.Height];
             for (int x = 0; x < texture.Width; x++)
             {
                 for (int y = 0; y < texture.Height; y++)
@@ -169,10 +166,10 @@ namespace InfiniteTerrain
                 currCVert = 0;
             else if (lastChunkVert > height)
                 lastChunkVert = chunks[0].Count;
-            
+
             for (int x = currCHori; x < lastChunkHori; x++)
                 for (int y = currCVert; y < lastChunkVert; y++)
-                    action(chunks[x][y]);
+                    action?.Invoke(chunks[x][y]);
         }
 
         /// <summary>
