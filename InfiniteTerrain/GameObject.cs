@@ -11,8 +11,8 @@ namespace InfiniteTerrain
         /// Initialized the object into the world.
         /// Consequently, the terrain field and world field is set.
         /// </summary>
-        /// <param name="terrain"></param>
-        /// <param name="world"></param>
+        /// <param name="terrain">The World's terrain instance.</param>
+        /// <param name="world">The world.</param>
         void Initialize(Terrain terrain, World world);
         /// <summary>
         /// The world's Terrain.
