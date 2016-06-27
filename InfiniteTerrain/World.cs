@@ -12,6 +12,10 @@ namespace InfiniteTerrain
         private readonly Terrain terrain;
         private readonly GameObject o;
 
+        /// <summary>
+        /// Creates and initializes a World.
+        /// </summary>
+        /// <param name="graphicsDevice">The GraphicsDevice from Game class.</param>
         public World(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
@@ -20,12 +24,19 @@ namespace InfiniteTerrain
 
         }
 
+        /// <summary>
+        /// Loads World content.
+        /// </summary>
         public void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(graphicsDevice);
         }
 
+        /// <summary>
+        /// Updates the world.
+        /// </summary>
+        /// <param name="gameTime">A snapshot of timing values.</param>
         public void Update(GameTime gameTime)
         {
             terrain.Update(gameTime);
@@ -53,6 +64,10 @@ namespace InfiniteTerrain
             }
         }
 
+        /// <summary>
+        /// Draws the world and all objects in the world.
+        /// </summary>
+        /// <param name="gameTime">A snapshot of timing values.</param>
         public void Draw(GameTime gameTime)
         {
             terrain.Draw(gameTime);
