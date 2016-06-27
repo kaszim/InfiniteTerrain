@@ -17,17 +17,11 @@ namespace InfiniteTerrain
         /// <summary>
         /// The world's Terrain.
         /// </summary>
-        Terrain Terrain
-        {
-            get;
-        }
+        Terrain Terrain { get; }
         /// <summary>
         /// The world.
         /// </summary>
-        World World
-        {
-            get;
-        }
+        World World { get; }
     }
 
     /// <summary>

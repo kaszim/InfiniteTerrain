@@ -11,9 +11,9 @@ namespace InfiniteTerrain
     /// </summary>
     public class Game1 : Game
     {
-        readonly GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        readonly FrameCounter fc;
+        private readonly GraphicsDeviceManager graphics;
+        private readonly FrameCounter fc;
+        private World world;
 
         public static GameWindow gWindow;
 
@@ -40,6 +40,7 @@ namespace InfiniteTerrain
         {
             Camera.Initialize(new Point(graphics.PreferredBackBufferWidth,
                 graphics.PreferredBackBufferHeight));
+            world = new World(GraphicsDevice);
 
             base.Initialize();
         }
@@ -50,6 +51,7 @@ namespace InfiniteTerrain
         /// </summary>
         protected override void LoadContent()
         {
+            world.LoadContent();
         }
 
         /// <summary>
@@ -84,6 +86,7 @@ namespace InfiniteTerrain
             if (keyState.IsKeyDown(Keys.W))
                 Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y - 300 * deltaTime);
 
+            world.Update(gameTime);
             fc.Update(deltaTime);
             Window.Title = "FPS " + fc.AverageFramesPerSecond;
             base.Update(gameTime);
@@ -97,6 +100,7 @@ namespace InfiniteTerrain
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             //Window.Title = gameTime.IsRunningSlowly.ToString();
+            world.Draw(gameTime);
 
             base.Draw(gameTime);
         }
