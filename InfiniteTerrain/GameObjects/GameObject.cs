@@ -65,7 +65,9 @@ namespace InfiniteTerrain.GameObjects
         // The world
         private World world;
 
-        //
+        /// <summary>
+        /// Called before the Initialization of a game object.
+        /// </summary>
         public event Action OnInitialize;
         /// <summary>
         /// Called before any other update logic.
