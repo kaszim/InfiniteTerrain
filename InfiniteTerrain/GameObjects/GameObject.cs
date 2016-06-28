@@ -72,11 +72,13 @@ namespace InfiniteTerrain.GameObjects
         /// <summary>
         /// Called before any other update logic.
         /// Return false to stop the rest of the update logic of running.
+        /// This also stops other events within the OnUpdate from invoking.
         /// </summary>
         public event Func<GameTime, bool> OnUpdate;
         /// <summary>
         /// Called before any other update logic.
         /// Return false to stop the rest of the update logic of running.
+        /// This also stops other events within the OnDraw from invoking.
         /// </summary>
         public event Func<SpriteBatch, bool> OnDraw;
 
@@ -113,11 +115,11 @@ namespace InfiniteTerrain.GameObjects
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         void IGameObject.Update(GameTime gameTime)
         {
-            var res = OnUpdate?.Invoke(gameTime);
-            if (res == null || res == true)
-            {
-                updatePhysics(gameTime);
-            }
+            if (OnUpdate != null)
+                foreach (Func<GameTime, bool> delg in OnUpdate.GetInvocationList())
+                    if (!delg.Invoke(gameTime))
+                        return;
+            updatePhysics(gameTime);
         }
 
         /// <summary>
@@ -163,12 +165,12 @@ namespace InfiniteTerrain.GameObjects
         /// <param name="spriteBatch">The spriteBatch to draw to.</param>
         void IGameObject.Draw(SpriteBatch spriteBatch)
         {
-            var res = OnDraw?.Invoke(spriteBatch);
-            if (res == null || res == true)
-            {
-                C3.XNA.Primitives2D.FillRectangle(spriteBatch, Camera.WorldToScreenRectangle(Rectangle),
-                Color.BlueViolet);
-            }
+            if(OnDraw != null)
+                foreach (Func<SpriteBatch, bool> delg in OnDraw.GetInvocationList())
+                    if (!delg.Invoke(spriteBatch))
+                        return;
+            C3.XNA.Primitives2D.FillRectangle(spriteBatch, Camera.WorldToScreenRectangle(Rectangle),
+            Color.BlueViolet);
         }
     }
 }
