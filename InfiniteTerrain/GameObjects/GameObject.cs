@@ -57,7 +57,7 @@ namespace InfiniteTerrain.GameObjects
     abstract class GameObject : IGameObject
     {
         // The gravity factor (how much pull there is on the object)
-        private float gravityFactor = 1000f;
+        protected float gravityFactor = 1000f;
         // The dampening factor, e.g how much friction the air is making
         private float dampeningFactor = 8f;
         // The World's terrain object
@@ -129,10 +129,11 @@ namespace InfiniteTerrain.GameObjects
         private void updatePhysics(GameTime gameTime)
         {
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Velocity -= Velocity * dampeningFactor * deltaTime;
             // Gravity disabled for now.
             //velocity.X -= velocity.X * dampeningFactor * deltaTime;
-            //velocity.Y += gravityFactor * deltaTime;
+            Velocity = new Vector2(
+                Velocity.X - Velocity.X * dampeningFactor * deltaTime,
+                Velocity.Y + gravityFactor * deltaTime);
 
             //Collision
             Position += Velocity * deltaTime;
@@ -154,7 +155,17 @@ namespace InfiniteTerrain.GameObjects
                     dy = other.Y - Position.Y - Rectangle.Height;
                 // Whichever of the d's are smallest should be solved first, leave the other for
                 // next update
-                var dPos = Math.Abs(dx) > Math.Abs(dy) ? new Vector2(0, dy) : new Vector2(dx, 0);
+                Vector2 dPos;
+                if (Math.Abs(dx) > Math.Abs(dy))
+                {
+                    dPos = new Vector2(0, dy);
+                    Velocity = new Vector2(Velocity.X, 0);
+                }
+                else
+                {
+                    dPos = new Vector2(dx, 0);
+                    Velocity = new Vector2(0, Velocity.Y);
+                }
                 Position += dPos;
             }
         }

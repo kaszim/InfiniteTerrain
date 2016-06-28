@@ -33,8 +33,7 @@ namespace InfiniteTerrain
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(graphicsDevice);
-            for(int i = 0; i < 500; i++)
-                Add(new Player());
+            Add(new Player());
         }
 
         /// <summary>
