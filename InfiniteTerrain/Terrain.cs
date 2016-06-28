@@ -174,7 +174,7 @@ namespace InfiniteTerrain
 
         /// <summary>
         /// Returns all rectangles which collides with the search rectangle and
-        /// has the same type as the searchType.
+        /// has the same type as the searchType. This search is done through all quadtrees.
         /// </summary>
         /// <param name="searchRectangle">The rectangle to test against.</param>
         /// <param name="searchType">The QuadTreeType to test against.</param>
@@ -188,6 +188,38 @@ namespace InfiniteTerrain
                 {
                     rectangles.AddRange(chunk.FindCollidingRectangles(searchRectangle, searchType));
                 }
+            return rectangles;
+        }
+
+        /// <summary>
+        /// Returns all rectangles which collides with the search rectangle and
+        /// has the same type as the searchType. Only searches within specified boundaries.
+        /// For example: if supplied with the boundary {2, 2} and search rectangle position {2,2}
+        /// the search would be in the following interval: X: [0, 4] Y: [0, 4].
+        /// </summary>
+        /// <param name="searchRectangle">The rectangle to test against.</param>
+        /// <param name="searchType">The QuadTreeType to test against.</param>
+        /// <param name="boundary">The specied boundary to search within.</param>
+        /// <returns>A list of rectangles in the terrain which collides wiht searchRectangle.</returns>
+        public List<Rectangle> GetCollidingRectangles(Rectangle searchRectangle, QuadTreeType searchType, Point boundary)
+        {
+            //TODO: Only test against nearby terrainchunks
+            var rectangles = new List<Rectangle>();
+            var x = searchRectangle.X / chunkWidth;
+            var y = searchRectangle.Y / chunkHeight;
+            var xmin = Math.Max(x - boundary.X, 0);
+            var ymin = Math.Max(y - boundary.Y, 0);
+            var xmax = Math.Min(x + boundary.X, nChunksHorizontal - 1);
+            var ymax = Math.Min(y + boundary.Y, nChunksVertical - 1);
+            for (x = xmin; x <= xmax; x++)
+            {
+                for (y = ymin; y <= ymax; y++)
+                {
+                    var chunk = chunks[x][y];
+                    rectangles.AddRange(chunk.FindCollidingRectangles(searchRectangle, searchType));
+
+                }
+            }
             return rectangles;
         }
 

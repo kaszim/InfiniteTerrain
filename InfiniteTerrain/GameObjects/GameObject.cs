@@ -137,7 +137,8 @@ namespace InfiniteTerrain.GameObjects
 
             //Collision
             Position += Velocity * deltaTime;
-            var recs = terrain.GetCollidingRectangles(Rectangle, QuadTreeType.Texture);
+            //TODO: Change search quadrants
+            var recs = terrain.GetCollidingRectangles(Rectangle, QuadTreeType.Texture, new Point(1));
             foreach (Rectangle other in recs)
             {
                 var dCenter = Rectangle.Center - other.Center;
