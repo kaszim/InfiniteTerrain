@@ -102,6 +102,7 @@ namespace InfiniteTerrain.GameObjects
 
         void IGameObject.Initialize(Terrain terrain, World world)
         {
+            OnInitialize?.Invoke();
             this.terrain = terrain;
             this.world = world;
         }
