@@ -44,6 +44,7 @@
     <Compile Include="GameObjects\GameObject.cs" />
     <Compile Include="GameObjects\Player.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="PerlinNoise.cs" />
     <Compile Include="Primitives2D.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
