@@ -1,0 +1,2 @@
+* If the player moves too far east the collisions stops working. *
+--------------------------------------------------------------------
