@@ -220,7 +220,6 @@ namespace InfiniteTerrain
             var ymin = Math.Max(y - boundary.Y, 0);
             var xmax = Math.Min(x + boundary.X, NumberOfChunksHorizontally - 1);
             var ymax = Math.Min(y + boundary.Y, NumberOfChunksVertically - 1);
-            Game1.gWindow.Title = $"{x}, {y} : {xmin}, {ymin} : {xmax}, {ymax}";
             for (x = xmin; x <= xmax; x++)
             {
                 for (y = ymin; y <= ymax; y++)

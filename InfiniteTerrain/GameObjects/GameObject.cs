@@ -141,34 +141,48 @@ namespace InfiniteTerrain.GameObjects
             var recs = terrain.GetCollidingRectangles(Rectangle, QuadTreeType.Texture, new Point(1));
             foreach (Rectangle other in recs)
             {
-                var dCenter = Rectangle.Center - other.Center;
-                float dx;
-                float dy;
-                // Check which side we intersect from and calculate the dx accordingly
-                if (dCenter.X > 0)
-                    dx = other.X + other.Size.X - Position.X;
-                else
-                    dx = other.X - Position.X - Rectangle.Width;
-                // same thing here but with dy
-                if (dCenter.Y > 0)
-                    dy = other.Y + other.Size.Y - Position.Y;
-                else
-                    dy = other.Y - Position.Y - Rectangle.Height;
-                // Whichever of the d's are smallest should be solved first, leave the other for
-                // next update
-                Vector2 dPos;
-                if (Math.Abs(dx) > Math.Abs(dy))
+                solveCollsion(other);
+            }
+        }
+
+        private void solveCollsion(Rectangle other)
+        {
+            var dCenter = Rectangle.Center - other.Center;
+            float dx;
+            float dy;
+            // Check which side we intersect from and calculate the dx accordingly
+            if (dCenter.X > 0)
+                dx = other.X + other.Size.X - Position.X;
+            else
+                dx = other.X - Position.X - Rectangle.Width;
+            // same thing here but with dy
+            if (dCenter.Y > 0)
+                dy = other.Y + other.Size.Y - Position.Y;
+            else
+                dy = other.Y - Position.Y - Rectangle.Height;
+            // Whichever of the d's are smallest should be solved first, leave the other for
+            // next update
+            var absdx = Math.Abs(dx);
+            var absdy = Math.Abs(dy);
+            Vector2 dPos;
+            if (absdx > absdy)
+            {
+                dPos = new Vector2(0, dy);
+                Velocity = new Vector2(Velocity.X, 0);
+            }
+            else
+            {
+                if (absdy <= 1.5f)
                 {
                     dPos = new Vector2(0, dy);
-                    Velocity = new Vector2(Velocity.X, 0);
                 }
                 else
                 {
                     dPos = new Vector2(dx, 0);
                     Velocity = new Vector2(0, Velocity.Y);
                 }
-                Position += dPos;
             }
+            Position += dPos;
         }
 
         /// <summary>
