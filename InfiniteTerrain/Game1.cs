@@ -88,7 +88,7 @@ namespace InfiniteTerrain
 
             world.Update(gameTime);
             fc.Update(deltaTime);
-            Window.Title = $"FPS {fc.AverageFramesPerSecond}";
+            //Window.Title = $"FPS {fc.AverageFramesPerSecond}";
             base.Update(gameTime);
         }
 

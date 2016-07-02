@@ -18,9 +18,9 @@ namespace InfiniteTerrain
         readonly Texture2D texture2;
         private readonly int chunkWidth;
         private readonly int chunkHeight;
-        // The maximum number of chunks that fit into the screen horizontally
+        // The maximum number of chunks that are visible horizontally
         private readonly int nChunksHorizontal;
-        // The maximum number of chunks that fit into the screen vertically
+        // The maximum number of chunks that are visible vertically
         private readonly int nChunksVertical;
         // The games graphicsdevice.
         private readonly GraphicsDevice graphicsDevice;
@@ -30,6 +30,15 @@ namespace InfiniteTerrain
         // in chunks
         private readonly int width;
         private readonly int height;
+
+        /// <summary>
+        /// Returns the number of chunks that are in this terrain object, horizontally.
+        /// </summary>
+        public int NumberOfChunksHorizontally => chunks.Count;
+        /// <summary>
+        /// Returns the number of chunks that are in this terrain object, vertically.
+        /// </summary>
+        public int NumberOfChunksVertically => chunks[0].Count;
 
         /// <summary>
         /// A chunk of terrain.
@@ -209,8 +218,9 @@ namespace InfiniteTerrain
             var y = searchRectangle.Y / chunkHeight;
             var xmin = Math.Max(x - boundary.X, 0);
             var ymin = Math.Max(y - boundary.Y, 0);
-            var xmax = Math.Min(x + boundary.X, nChunksHorizontal - 1);
-            var ymax = Math.Min(y + boundary.Y, nChunksVertical - 1);
+            var xmax = Math.Min(x + boundary.X, NumberOfChunksHorizontally - 1);
+            var ymax = Math.Min(y + boundary.Y, NumberOfChunksVertically - 1);
+            Game1.gWindow.Title = $"{x}, {y} : {xmin}, {ymin} : {xmax}, {ymax}";
             for (x = xmin; x <= xmax; x++)
             {
                 for (y = ymin; y <= ymax; y++)
