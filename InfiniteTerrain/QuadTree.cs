@@ -141,9 +141,10 @@ namespace InfiniteTerrain
         [Conditional("DEBUG")]
         public void Draw(SpriteBatch spriteBatch)
         {
-            C3.XNA.Primitives2D.DrawRectangle(spriteBatch, Camera.WorldToScreenRectangle(rectangle),
-                Color.Black);
-            if(!isLeaf)
+            if(isLeaf)
+                C3.XNA.Primitives2D.DrawRectangle(spriteBatch, Camera.WorldToScreenRectangle(rectangle),
+                    Color.Black);
+            else
                 foreach (var child in children)
                     child.Draw(spriteBatch);
         }
