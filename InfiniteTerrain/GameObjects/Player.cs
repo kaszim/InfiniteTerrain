@@ -23,13 +23,21 @@ namespace InfiniteTerrain.GameObjects
 
             var keyState = Keyboard.GetState();
             if (keyState.IsKeyDown(Keys.Right))
+            {
                 Velocity = new Vector2(Velocity.X + acceleration * deltaTime, Velocity.Y);
+            }
             if (keyState.IsKeyDown(Keys.Left))
+            {
                 Velocity = new Vector2(Velocity.X - acceleration * deltaTime, Velocity.Y);
+            }
             if (keyState.IsKeyDown(Keys.Down))
+            {
                 Velocity = new Vector2(Velocity.X, Velocity.Y + acceleration * deltaTime);
+            }
             if (keyState.IsKeyDown(Keys.Up))
+            {
                 Velocity = new Vector2(Velocity.X, Velocity.Y - acceleration * deltaTime);
+            }
 
             return true;
         }
