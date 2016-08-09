@@ -172,7 +172,7 @@ namespace InfiniteTerrain.GameObjects
             }
             else
             {
-                if (absdy <= 2f)
+                if (absdy <= 5f)
                 {
                     dPos = new Vector2(0, dy);
                 }

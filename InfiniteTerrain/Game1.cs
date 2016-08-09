@@ -74,6 +74,9 @@ namespace InfiniteTerrain
                 || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            // Update Timers
+            Timer.Update(gameTime);
+
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             var keyState = Keyboard.GetState();

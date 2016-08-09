@@ -15,6 +15,12 @@ namespace InfiniteTerrain.GameObjects
             OnUpdate += Player_OnUpdate;
             Position = new Vector2(300);
             Size = new Point(25, 75);
+            var t = new Timer(1, (EventArgs args) =>
+            {
+                Velocity = new Vector2(Velocity.X, Velocity.Y - acceleration);
+                args.Repeat = true;
+                Game1.gWindow.Title = Velocity.ToString();
+            });
         }
 
         private bool Player_OnUpdate(GameTime gameTime)
