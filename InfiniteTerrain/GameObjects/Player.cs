@@ -53,7 +53,7 @@ namespace InfiniteTerrain.GameObjects
             }
             if (keyState.IsKeyDown(Keys.Left))
             {
-                Velocity = new Vector2(Velocity.X + acceleration * deltaTime,
+                Velocity = new Vector2(Velocity.X - acceleration * deltaTime,
                     canFloat ? Velocity.Y - floatAmount : Velocity.Y);
                 if (canFloat)
                     canFloat = !canFloat;
