@@ -14,7 +14,7 @@ namespace InfiniteTerrain
     }
 
     /// <summary>
-    /// Times an action and invokes it after a specified amount of time.
+    /// Times a method and invokes it after a specified amount of delay.
     /// If the pass EventArgs classe's property Repeat is set to true, the event will
     /// be repeated once more.
     /// Uses GameTime.
@@ -24,8 +24,24 @@ namespace InfiniteTerrain
         private static HashSet<Timer> timers = new HashSet<Timer>();
         private static HashSet<Timer> timerDeathBucket = new HashSet<Timer>();
 
-        private float sumDelta;
+        public int RaiseCount
+        {
+            get
+            {
+                return raiseCount;
+            }
+
+            set
+            {
+                raiseCount = value;
+            }
+        }
+
+        private int raiseCount;
+        private float currTime;
         private float delay;
+
+
         private event Action<EventArgs> action;
         
         /// <summary>
@@ -47,13 +63,17 @@ namespace InfiniteTerrain
 
         /// <summary>
         /// Constructs a timer instance and initializes it.
+        /// Times a method and invokes it after a specified amount of delay.
+        /// If the pass EventArgs classe's property Repeat is set to true, the timer will
+        /// be repeated once more.
         /// </summary>
-        /// <param name="delay">Seconds</param>
-        /// <param name="action"></param>
+        /// <param name="delay">Specifies the time til the method is invoked (in seconds).</param>
+        /// <param name="action">The method that should be invoked after the delay.</param>
         public Timer(float delay, Action<EventArgs> action)
         {
             this.delay = delay;
             this.action = action;
+            RaiseCount = 0;
             timers.Add(this);
         }
 
@@ -64,18 +84,19 @@ namespace InfiniteTerrain
         /// <param name="gameTime"></param>
         private void update(GameTime gameTime)
         {
-            sumDelta += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            currTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (sumDelta >= delay)
+            if (currTime >= delay)
             {
                 var args = new EventArgs
                 {
                     GameTime = gameTime
                 };
                 action?.Invoke(args);
+                RaiseCount++;
 
                 if (args.Repeat)
-                    sumDelta -= delay;
+                    currTime = 0;
                 else
                     destroy();
             }

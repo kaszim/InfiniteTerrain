@@ -9,17 +9,33 @@ namespace InfiniteTerrain.GameObjects
     {
         // Acceleration of this player
         private float acceleration = 2000f;
+        private float floatAmount = 200f;
+        private float floatDelay = 0.5f;
+        private Timer horizontalJumpTimer;
+        private KeyboardState keyState;
+        private bool canFloat;
+
+        /// <summary>
+        /// Checks if the player is getting horizontal movement input.
+        /// </summary>
+        /// <returns>Returns true if the player is getting horizontal movement input.</returns>
+        public bool HorizontalMovementInput
+        {
+            get
+            {
+                return (keyState.IsKeyDown(Keys.Left) || keyState.IsKeyDown(Keys.Right));
+            }
+        }
 
         public Player()
         {
             OnUpdate += Player_OnUpdate;
             Position = new Vector2(300);
             Size = new Point(25, 75);
-            var t = new Timer(1, (EventArgs args) =>
+            horizontalJumpTimer = new Timer(floatDelay, (EventArgs args) =>
             {
-                Velocity = new Vector2(Velocity.X, Velocity.Y - acceleration);
-                args.Repeat = true;
-                Game1.gWindow.Title = Velocity.ToString();
+                canFloat = true;
+                 args.Repeat = true;
             });
         }
 
@@ -30,11 +46,17 @@ namespace InfiniteTerrain.GameObjects
             var keyState = Keyboard.GetState();
             if (keyState.IsKeyDown(Keys.Right))
             {
-                Velocity = new Vector2(Velocity.X + acceleration * deltaTime, Velocity.Y);
+                Velocity = new Vector2(Velocity.X + acceleration * deltaTime,
+                    canFloat ? Velocity.Y - floatAmount: Velocity.Y);
+                if (canFloat)
+                    canFloat = !canFloat;
             }
             if (keyState.IsKeyDown(Keys.Left))
             {
-                Velocity = new Vector2(Velocity.X - acceleration * deltaTime, Velocity.Y);
+                Velocity = new Vector2(Velocity.X + acceleration * deltaTime,
+                    canFloat ? Velocity.Y - floatAmount : Velocity.Y);
+                if (canFloat)
+                    canFloat = !canFloat;
             }
             if (keyState.IsKeyDown(Keys.Down))
             {
