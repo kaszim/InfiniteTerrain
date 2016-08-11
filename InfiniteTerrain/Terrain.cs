@@ -214,7 +214,6 @@ namespace InfiniteTerrain
         /// <returns>A list of rectangles in the terrain which collides wiht searchRectangle.</returns>
         public List<Rectangle> GetCollidingRectangles(Rectangle searchRectangle, QuadTreeType searchType)
         {
-            //TODO: Only test against nearby terrainchunks
             var rectangles = new List<Rectangle>();
             foreach(var xbucket in chunks)
                 foreach(var chunk in xbucket)
@@ -236,7 +235,6 @@ namespace InfiniteTerrain
         /// <returns>A list of rectangles in the terrain which collides wiht searchRectangle.</returns>
         public List<Rectangle> GetCollidingRectangles(Rectangle searchRectangle, QuadTreeType searchType, Point boundary)
         {
-            //TODO: Only test against nearby terrainchunks
             var rectangles = new List<Rectangle>();
             var x = searchRectangle.X / chunkWidth;
             var y = searchRectangle.Y / chunkHeight;
