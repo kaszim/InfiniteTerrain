@@ -172,14 +172,15 @@ namespace InfiniteTerrain.GameObjects
             }
             else
             {
-                if (absdy <= 5f)
+                // if the collider is less than an amoutn step onto it
+                if (absdy <= 1f)
                 {
                     dPos = new Vector2(0, dy);
                 }
                 else
                 {
                     dPos = new Vector2(dx, 0);
-                    Velocity = new Vector2(0, Velocity.Y);
+                    //Velocity = new Vector2(0, Velocity.Y); cant remember :(
                 }
             }
             Position += dPos;
