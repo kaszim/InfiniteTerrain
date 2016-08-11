@@ -238,6 +238,9 @@ namespace InfiniteTerrain
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public void Update(GameTime gameTime)
         {
+
+
+            // Drawing logic
             var mouseState = Mouse.GetState();
             var mousePos = Camera.ScreenToWorldPosition(new Vector2(mouseState.X, mouseState.Y));
             if (mouseState.LeftButton == ButtonState.Pressed)
