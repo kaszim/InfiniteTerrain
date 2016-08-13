@@ -157,9 +157,9 @@ namespace InfiniteTerrain
         }
 
         /// <summary>
-        /// Does something with on every visible chunk.
+        /// Applies a method on every visible chunk.
         /// </summary>
-        /// <param name="action">The action to apply.</param>
+        /// <param name="action">The method to invoke.</param>
         private void forEachVisibleChunk(Action<TerrainChunk> action)
         {
             var currCHori = (int)Camera.Position.X / chunkWidth;
@@ -179,6 +179,30 @@ namespace InfiniteTerrain
             for (int x = currCHori; x < lastChunkHori; x++)
                 for (int y = currCVert; y < lastChunkVert; y++)
                     action?.Invoke(chunks[x][y]);
+        }
+
+        /// <summary>
+        /// Applies a method on every chunk in a specified area.
+        /// The area is specified in chunk coordinates.
+        /// </summary>
+        /// <param name="area">The area rectangle.</param>
+        /// <param name="action">The method to invoke.</param>
+        private void forEachChunkInArea(Rectangle area, Action<TerrainChunk> action)
+        {
+            var rectangles = new List<Rectangle>();
+            var x = area.X; // Auto Floor because of int
+            var y = area.Y;
+            var xmin = Math.Max(x, 0);
+            var ymin = Math.Max(y, 0);
+            var xmax = Math.Min(x + area.Width, NumberOfChunksHorizontally - 1);
+            var ymax = Math.Min(y + area.Height, NumberOfChunksVertically - 1);
+            for (x = xmin; x <= xmax; x++)
+            {
+                for (y = ymin; y <= ymax; y++)
+                {
+                    action?.Invoke(chunks[x][y]);
+                }
+            }
         }
 
         /// <summary>
@@ -220,16 +244,25 @@ namespace InfiniteTerrain
             var ymin = Math.Max(y - boundary.Y, 0);
             var xmax = Math.Min(x + boundary.X, NumberOfChunksHorizontally - 1);
             var ymax = Math.Min(y + boundary.Y, NumberOfChunksVertically - 1);
-            for (x = xmin; x <= xmax; x++)
-            {
-                for (y = ymin; y <= ymax; y++)
-                {
-                    var chunk = chunks[x][y];
-                    rectangles.AddRange(chunk.FindCollidingRectangles(searchRectangle, searchType));
-
-                }
-            }
+            forEachChunkInArea(new Rectangle(xmin, ymin, boundary.X, boundary.Y), 
+                (c) => rectangles.AddRange(c.FindCollidingRectangles(searchRectangle, searchType)));
             return rectangles;
+        }
+
+        /// <summary>
+        /// Applies a texture to the terrain on the specified position.
+        /// Also updates the underlying QuadTree structure with the specified type.
+        /// </summary>
+        /// <param name="texture">The texture to apply.</param>
+        /// <param name="position">The position to apply the texture to.</param>
+        /// <param name="type">The new type of the QuadTree.</param>
+        public void ApplyTexture(Texture2D texture, Vector2 position, QuadTreeType type)
+        {
+            //TODO: Depending on the size of the texture, choose area accordinly
+            var x = (int)position.X / chunkWidth;
+            var y = (int)position.Y / chunkHeight;
+            forEachChunkInArea(new Rectangle(x, y, 1, 1),
+                (c) => c.Modify(texture, position, type));
         }
 
         /// <summary>
@@ -246,14 +279,16 @@ namespace InfiniteTerrain
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
                 // Get the center of the modifier
-                var center = new Vector2(mousePos.X - (texture.Width >> 1), mousePos.Y - (texture.Height >> 1));
-                forEachVisibleChunk((c) => c.Modify(texture, center, QuadTreeType.Empty));
+                var center = new Vector2(mousePos.X - (texture.Width >> 1),
+                    mousePos.Y - (texture.Height >> 1));
+                ApplyTexture(texture, center, QuadTreeType.Empty);
             }
             else if (mouseState.RightButton == ButtonState.Pressed)
             {
                 // Get the center of the modifier
-                var center = new Vector2(mousePos.X - (texture.Width >> 1), mousePos.Y - (texture.Height >> 1));
-                forEachVisibleChunk((c) => c.Modify(texture2, center, QuadTreeType.Texture));
+                var center = new Vector2(mousePos.X - (texture.Width >> 1),
+                    mousePos.Y - (texture.Height >> 1));
+                ApplyTexture(texture2, center, QuadTreeType.Texture);
             }
         }
 
