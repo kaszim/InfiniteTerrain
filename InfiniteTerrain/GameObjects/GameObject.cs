@@ -98,6 +98,11 @@ namespace InfiniteTerrain.GameObjects
         /// The GameObject's bounding rectangle.
         /// </summary>
         public Rectangle Rectangle => new Rectangle((int)Position.X, (int)Position.Y, Size.X, Size.Y);
+        /// <summary>
+        /// The distance to the terrain from the gameobject's feet. If the distance is 50, it means
+        /// it is actually 50 or more.
+        /// </summary>
+        public int DistanceToTerrain { get; set; }
 
         Terrain IGameObject.Terrain => terrain;
         World IGameObject.World => world;
@@ -129,20 +134,32 @@ namespace InfiniteTerrain.GameObjects
         private void updatePhysics(GameTime gameTime)
         {
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            // Gravity disabled for now.
-            //velocity.X -= velocity.X * dampeningFactor * deltaTime;
             Velocity = new Vector2(
                 Velocity.X - Velocity.X * dampeningFactor * deltaTime,
-                Velocity.Y + gravityFactor * deltaTime);
+                (Velocity.Y - Velocity.Y * dampeningFactor * deltaTime));
 
-            //Collision
+            // Collision
             Position += Velocity * deltaTime;
-            //TODO: Change search quadrants
+            // TODO: Change search quadrants
             var recs = terrain.GetCollidingRectangles(Rectangle, QuadTreeType.Texture, new Point(1));
             foreach (Rectangle other in recs)
             {
                 solveCollsion(other);
             }
+
+            // Distance to terrain from feet
+            // TODO: Better distance measuring
+            int i;
+            for (i = 1; i < 50; i++)
+            {
+                recs = terrain.GetCollidingRectangles(
+                    new Rectangle(Rectangle.X + (Rectangle.Width >> 1), Rectangle.Y + Rectangle.Height, 1, i),
+                    QuadTreeType.Texture, new Point(1));
+                if (recs.Count > 0)
+                    break;
+            }
+            DistanceToTerrain = i;
+            
         }
 
         private void solveCollsion(Rectangle other)
