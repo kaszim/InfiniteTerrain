@@ -14,6 +14,7 @@ namespace InfiniteTerrain
         private SpriteBatch spriteBatch;
         private readonly Terrain terrain;
         private readonly HashSet<IGameObject> gameObjects;
+        private WorldGenerator worldGenerator;
 
         /// <summary>
         /// Creates and initializes a World.
@@ -24,6 +25,11 @@ namespace InfiniteTerrain
             this.graphicsDevice = graphicsDevice;
             terrain = new Terrain(graphicsDevice, 10000, 5000);
             gameObjects = new HashSet<IGameObject>();
+            //TODO: remove temp pixel
+            var pixel = new Texture2D(graphicsDevice, 1, 1);
+            pixel.SetData(new Color[] { Color.Red });
+            worldGenerator = new WorldGenerator(terrain, pixel);
+            worldGenerator.GenerateArea(new Rectangle(0, 0, 50, 50));
         }
 
         /// <summary>
