@@ -64,6 +64,8 @@ namespace InfiniteTerrain.GameObjects
         private Terrain terrain;
         // The world
         private World world;
+        // The distance to the terrain.
+        private int distanceToTerrain;
 
         /// <summary>
         /// Called before the Initialization of a game object.
@@ -99,19 +101,38 @@ namespace InfiniteTerrain.GameObjects
         /// </summary>
         public Rectangle Rectangle => new Rectangle((int)Position.X, (int)Position.Y, Size.X, Size.Y);
         /// <summary>
-        /// The distance to the terrain from the gameobject's feet. If the distance is 50, it means
-        /// it is actually 50 or more.
+        /// Wether or not to measure the distance to the terrain. Default is false.
         /// </summary>
-        public int DistanceToTerrain { get; set; }
+        public bool MeasureDistanceToTerrain { get; set; }
+        /// <summary>
+        /// The distance to the terrain from the gameobject's feet. If the distance is 50, it means
+        /// it is actually 50 or more. If the measuring is off, the distance will be set to -1.
+        /// </summary>
+        public int DistanceToTerrain
+        {
+            get
+            {
+                if (MeasureDistanceToTerrain)
+                    return distanceToTerrain;
+                else
+                    return -1;
+            }
+
+            private set
+            {
+                distanceToTerrain = value;
+            }
+        }
 
         Terrain IGameObject.Terrain => terrain;
         World IGameObject.World => world;
 
         void IGameObject.Initialize(Terrain terrain, World world)
         {
-            OnInitialize?.Invoke();
             this.terrain = terrain;
             this.world = world;
+            this.MeasureDistanceToTerrain = false;
+            OnInitialize?.Invoke();
         }
 
         /// <summary>
@@ -149,17 +170,19 @@ namespace InfiniteTerrain.GameObjects
 
             // Distance to terrain from feet
             // TODO: Better distance measuring
-            int i;
-            for (i = 1; i < 50; i++)
+            if (MeasureDistanceToTerrain)
             {
-                recs = terrain.GetCollidingRectangles(
-                    new Rectangle(Rectangle.X + (Rectangle.Width >> 1), Rectangle.Y + Rectangle.Height, 1, i),
-                    QuadTreeType.Texture, new Point(1));
-                if (recs.Count > 0)
-                    break;
+                int i;
+                for (i = 1; i < 50; i++)
+                {
+                    recs = terrain.GetCollidingRectangles(
+                        new Rectangle(Rectangle.X + (Rectangle.Width >> 1), Rectangle.Y + Rectangle.Height, 1, i),
+                        QuadTreeType.Texture, new Point(1));
+                    if (recs.Count > 0)
+                        break;
+                }
+                DistanceToTerrain = i;
             }
-            DistanceToTerrain = i;
-            
         }
 
         private void solveCollsion(Rectangle other)

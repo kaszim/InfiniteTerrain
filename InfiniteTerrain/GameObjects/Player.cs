@@ -13,8 +13,14 @@ namespace InfiniteTerrain.GameObjects
         public Player()
         {
             OnUpdate += Player_OnUpdate;
+            OnInitialize += Player_OnInitialize;
             Position = new Vector2(300);
             Size = new Point(25, 75);
+        }
+
+        private void Player_OnInitialize()
+        {
+            MeasureDistanceToTerrain = true;
         }
 
         private bool Player_OnUpdate(GameTime gameTime)
