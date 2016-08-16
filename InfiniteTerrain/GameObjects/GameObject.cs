@@ -136,7 +136,7 @@ namespace InfiniteTerrain.GameObjects
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Velocity = new Vector2(
                 Velocity.X - Velocity.X * dampeningFactor * deltaTime,
-                (Velocity.Y - Velocity.Y * dampeningFactor * deltaTime));
+                (Velocity.Y - Velocity.Y * dampeningFactor * deltaTime + gravityFactor * deltaTime));
 
             // Collision
             Position += Velocity * deltaTime;
@@ -213,8 +213,8 @@ namespace InfiniteTerrain.GameObjects
                 foreach (Func<SpriteBatch, bool> delg in OnDraw.GetInvocationList())
                     if (!delg.Invoke(spriteBatch))
                         return;
-            C3.XNA.Primitives2D.FillRectangle(spriteBatch, Camera.WorldToScreenRectangle(Rectangle),
-            Color.BlueViolet);
+            C3.XNA.Primitives2D.FillRectangle(spriteBatch, Camera.WorldToScreenPosition(Position), new Vector2(Size.X, Size.Y), Color.BlueViolet);
+            
         }
     }
 }

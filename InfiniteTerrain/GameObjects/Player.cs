@@ -22,8 +22,8 @@ namespace InfiniteTerrain.GameObjects
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             var y = ((float)DistanceToTerrain) / 50f;
-            var x = (int)MathHelper.LerpPrecise(-gravityFactor, gravityFactor, y);
-            Velocity = new Vector2(Velocity.X, Velocity.Y + x * deltaTime);
+            var x = (int)MathHelper.LerpPrecise(-gravityFactor, gravityFactor, y) * 2f;
+            Velocity = new Vector2(Velocity.X, Velocity.Y + x * deltaTime - gravityFactor * deltaTime);
             Game1.gWindow.Title = Velocity.ToString();
 
             var keyState = Keyboard.GetState();
