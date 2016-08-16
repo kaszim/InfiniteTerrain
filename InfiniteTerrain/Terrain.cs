@@ -74,7 +74,28 @@ namespace InfiniteTerrain
             }
 
             /// <summary>
-            /// Modifies the chunk of terrain.
+            /// Modifies the chunk of terrain without updating the QuadTree.
+            /// </summary>
+            /// <param name="modifier"></param>
+            /// <param name="position">The external position to modify.</param>
+            public void Modify(Texture2D modifier, Vector2 position)
+            {
+                // Translate the external position to internal
+                var iPos = position - this.position;
+                // Set the rendertarget to this chunk's
+                graphicsDevice.SetRenderTarget(renderTarget);
+                // Begin drawing to the spritebatch, using blendsate.opaque
+                // (this blendstate removes previously drawn colors, and only leaves the current drawn ones)
+                spriteBatch.Begin(blendState: BlendState.Opaque);
+                // Draw the modifier texture to the rendertarget.
+                spriteBatch.Draw(modifier, iPos, Color.White);
+                spriteBatch.End();
+                // Set to the main rendertarget.
+                graphicsDevice.SetRenderTarget(null);
+            }
+
+            /// <summary>
+            /// Modifies the chunk of terrain and updates the underlying QuadTree.
             /// </summary>
             /// <param name="modifier"></param>
             /// <param name="position">The external position to modify.</param>
@@ -245,6 +266,20 @@ namespace InfiniteTerrain
             forEachChunkInArea(new Rectangle(xmin, ymin, boundary.X, boundary.Y), 
                 (c) => rectangles.AddRange(c.FindCollidingRectangles(searchRectangle, searchType)));
             return rectangles;
+        }
+        /// <summary>
+        /// Applies a texture to the terrain on the specified position.
+        /// Without updating the underlying QuadTree's.
+        /// </summary>
+        /// <param name="texture">The texture to apply.</param>
+        /// <param name="position">The position to apply the texture to.</param>
+        public void ApplyTexture(Texture2D texture, Vector2 position)
+        {
+            //TODO: Depending on the size of the texture, choose area accordinly
+            var x = (int)position.X / chunkWidth;
+            var y = (int)position.Y / chunkHeight;
+            forEachChunkInArea(new Rectangle(x, y, 1, 1),
+                (c) => c.Modify(texture, position));
         }
 
         /// <summary>
