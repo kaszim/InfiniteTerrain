@@ -51,7 +51,7 @@ namespace InfiniteTerrain
         /// </summary>
         protected override void LoadContent()
         {
-            world.LoadContent();
+            world.LoadContent(Content);
         }
 
         /// <summary>

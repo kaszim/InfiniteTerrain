@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using InfiniteTerrain.GameObjects;
@@ -25,21 +26,21 @@ namespace InfiniteTerrain
             this.graphicsDevice = graphicsDevice;
             terrain = new Terrain(graphicsDevice, 10000, 5000);
             gameObjects = new HashSet<IGameObject>();
-            //TODO: remove temp pixel
-            var pixel = new Texture2D(graphicsDevice, 1, 1);
-            pixel.SetData(new Color[] { Color.Red });
-            worldGenerator = new WorldGenerator(terrain, pixel);
-            worldGenerator.GenerateArea(new Rectangle(0, 0, 50, 50));
+            worldGenerator = new WorldGenerator(terrain, graphicsDevice);
         }
 
         /// <summary>
         /// Loads World content.
         /// </summary>
-        public void LoadContent()
+        /// <param name="content">todo: describe content parameter on LoadContent</param>
+        public void LoadContent(ContentManager content)
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(graphicsDevice);
             Add(new Player());
+            worldGenerator.LoadContent(content);
+            worldGenerator.GenerateArea(new Rectangle(0, 0,
+                terrain.NumberOfChunksHorizontally, terrain.NumberOfChunksVertically));
         }
 
         /// <summary>
@@ -70,6 +71,10 @@ namespace InfiniteTerrain
             spriteBatch.End();
         }
 
+        /// <summary>
+        /// Adds a gameobject to the world and initializes it.
+        /// </summary>
+        /// <param name="o">The gameobject to add.</param>
         public void Add(GameObject o)
         {
             var interfaceO = (IGameObject)o;

@@ -40,6 +40,9 @@ namespace InfiniteTerrain
         /// </summary>
         public int NumberOfChunksVertically => chunks[0].Count;
 
+        public int ChunkWidth => chunkWidth;
+        public int ChunkHeight => chunkHeight;
+
         /// <summary>
         /// A chunk of terrain.
         /// </summary>
@@ -86,7 +89,7 @@ namespace InfiniteTerrain
                 graphicsDevice.SetRenderTarget(renderTarget);
                 // Begin drawing to the spritebatch, using blendsate.opaque
                 // (this blendstate removes previously drawn colors, and only leaves the current drawn ones)
-                spriteBatch.Begin(blendState: BlendState.Opaque);
+                spriteBatch.Begin(blendState: BlendState.Opaque, effect: null);
                 // Draw the modifier texture to the rendertarget.
                 spriteBatch.Draw(modifier, iPos, Color.White);
                 spriteBatch.End();
@@ -108,7 +111,7 @@ namespace InfiniteTerrain
                 graphicsDevice.SetRenderTarget(renderTarget);
                 // Begin drawing to the spritebatch, using blendsate.opaque
                 // (this blendstate removes previously drawn colors, and only leaves the current drawn ones)
-                spriteBatch.Begin(blendState: BlendState.Opaque);
+                spriteBatch.Begin(blendState: BlendState.Opaque, effect: null);
                 // Draw the modifier texture to the rendertarget.
                 spriteBatch.Draw(modifier, iPos, Color.White);
                 spriteBatch.End();
@@ -137,6 +140,8 @@ namespace InfiniteTerrain
         /// <summary>
         /// Constructs a terrain object.
         /// </summary>
+        /// <param name="height">In pixels</param>
+        /// <param name="width">In pixels</param>
         public Terrain(GraphicsDevice graphicsDevice, int width, int height)
         {
             this.graphicsDevice = graphicsDevice;
@@ -304,8 +309,6 @@ namespace InfiniteTerrain
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public void Update(GameTime gameTime)
         {
-
-
             // Drawing logic
             var mouseState = Mouse.GetState();
             var mousePos = Camera.ScreenToWorldPosition(new Vector2(mouseState.X, mouseState.Y));
