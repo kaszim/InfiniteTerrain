@@ -44,6 +44,10 @@ namespace InfiniteTerrain
             graphicsDevice.SetRenderTarget(renderTarget);
             graphicsDevice.Clear(Color.Transparent);
             terrainShader.Parameters["camPos"].SetValue(location);
+            terrainShader.Parameters["amp"].SetValue(5f);
+            terrainShader.Parameters["period"].SetValue(0.5f);
+            terrainShader.Parameters["yOffset"].SetValue(5f);
+            terrainShader.Parameters["snowFalloff"].SetValue(0.2f);
             spriteBatch.Begin(effect: terrainShader);
             {
                 spriteBatch.Draw(texture, Vector2.Zero, Color.White);

@@ -244,15 +244,19 @@ float snoise(float2 v)
 
 sampler TextureSampler : register(s0);
 float2 camPos;
+float amp;
+float period;
+float snowFalloff;
+float yOffset;
 
 float4 PixelShaderFunction(float4 pos : SV_POSITION, float4 color1 : COLOR0, float2 texCoord : TEXCOORD0) : SV_TARGET0
 {
 	float4 tex = tex2D(TextureSampler, texCoord);
-	float h = 0.3f*snoise(float2((texCoord.x + camPos.x)*5.0f, 5))+5.0f;
+	float h = amp*snoise(float2(period*(texCoord.x + camPos.x), 5))+yOffset;
 	if (texCoord.y + camPos.y > h)
 	{
-		if(texCoord.y + camPos.y < h+0.1f)
-			return float4(1, 0, 1, 1);
+		if(texCoord.y + camPos.y < h+snowFalloff)
+			return float4(1, 1, 1, 1);
 		else
 			return float4(0, 1, 0, 1);
 	}
