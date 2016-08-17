@@ -47,7 +47,6 @@ namespace InfiniteTerrain
             spriteBatch.Begin(effect: terrainShader);
             {
                 spriteBatch.Draw(texture, Vector2.Zero, Color.White);
-                
             }
             spriteBatch.End();
             graphicsDevice.SetRenderTarget(null);
