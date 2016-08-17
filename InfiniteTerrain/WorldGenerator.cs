@@ -37,15 +37,6 @@ namespace InfiniteTerrain
             renderTarget = new RenderTarget2D(graphicsDevice, terrain.ChunkWidth,
                 terrain.ChunkHeight);
             terrainShader = content.Load<Effect>("TerrainGeneration");
-            var colors = new Color[texture.Width * texture.Height];
-            for (int x = 0; x < texture.Width; x++)
-            {
-                for (int y = 0; y < texture.Height; y++)
-                {
-                    colors[x + y * texture.Height] = Color.White;
-                }
-            }
-            texture.SetData(colors);
         }
 
         public void GenerateChunk(Vector2 location)
