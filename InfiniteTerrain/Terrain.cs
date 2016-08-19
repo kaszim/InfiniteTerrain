@@ -65,7 +65,7 @@ namespace InfiniteTerrain
                 this.graphicsDevice = graphicsDevice;
                 this.rectangle = rectangle;
                 position = new Vector2(rectangle.X, rectangle.Y);
-                this.quadTree = new QuadTree(rectangle, QuadTreeType.Texture);
+                this.quadTree = new QuadTree(rectangle, QuadTreeType.Empty);
                 renderTarget = new RenderTarget2D(graphicsDevice, rectangle.Width, rectangle.Height,
                     false,
                     SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
