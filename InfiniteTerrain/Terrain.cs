@@ -40,8 +40,33 @@ namespace InfiniteTerrain
         /// </summary>
         public int NumberOfChunksVertically => chunks[0].Count;
 
+        /// <summary>
+        /// How wide the chunks are.
+        /// </summary>
         public int ChunkWidth => chunkWidth;
+        /// <summary>
+        /// How high the chunks are.
+        /// </summary>
         public int ChunkHeight => chunkHeight;
+
+        /// <summary>
+        /// Returns the color of a certain pixel.
+        /// </summary>
+        /// <returns>The color of the specified pixel.</returns>
+        public Color this[int x, int y]
+        {
+            get
+            {
+                // Get which chunk the position is in
+                var cX = (int)Math.Floor((double)x / ChunkWidth);
+                var cY = (int)Math.Floor((double)y / ChunkHeight);
+                var chunk = chunks[cX][cY];
+                // Get the internal position in the chunk
+                var iX = x - cX * ChunkWidth;
+                var iY = y - cY * ChunkHeight;
+                return chunk[iX, iY];
+            }
+        }
 
         /// <summary>
         /// A chunk of terrain.
@@ -54,6 +79,24 @@ namespace InfiniteTerrain
             private readonly Rectangle rectangle;
             private readonly QuadTree quadTree;
             private readonly Vector2 position;
+            private Color[] colorData;
+
+            /// <summary>
+            /// Returns the color of a certain pixel. Uses internal position of pixel.
+            /// </summary>
+            /// <returns>The color of the specified pixel.</returns>
+            public Color this[int x, int y]
+            {
+                get
+                {
+                    if (colorData == null)
+                    {
+                        colorData = new Color[renderTarget.Height * renderTarget.Width];
+                        renderTarget.GetData<Color>(colorData);
+                    }
+                    return colorData[x + y * renderTarget.Height];
+                }
+            }
 
             /// <summary>
             /// Creates a terrain chunk.
@@ -65,7 +108,7 @@ namespace InfiniteTerrain
                 this.graphicsDevice = graphicsDevice;
                 this.rectangle = rectangle;
                 position = new Vector2(rectangle.X, rectangle.Y);
-                this.quadTree = new QuadTree(rectangle, QuadTreeType.Empty);
+                this.quadTree = new QuadTree(rectangle, QuadTreeType.Texture);
                 renderTarget = new RenderTarget2D(graphicsDevice, rectangle.Width, rectangle.Height,
                     false,
                     SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
@@ -74,6 +117,17 @@ namespace InfiniteTerrain
                 graphicsDevice.SetRenderTarget(renderTarget);
                 graphicsDevice.Clear(Color.Green);
                 graphicsDevice.SetRenderTarget(null);
+            }
+
+            /// <summary>
+            /// Modifies the chunk of terrain only updating the QuadTree.
+            /// </summary>
+            /// <param name="rectangle">todo: describe rectangle parameter on Modify</param>
+            /// <param name="quadTreeType">todo: describe quadTreeType parameter on Modify</param>
+            public void Modify(Rectangle rectangle, QuadTreeType quadTreeType)
+            {
+                // Insert a modifier rectangle into the quadtree.
+                quadTree.Insert(rectangle, quadTreeType);
             }
 
             /// <summary>
@@ -95,6 +149,8 @@ namespace InfiniteTerrain
                 spriteBatch.End();
                 // Set to the main rendertarget.
                 graphicsDevice.SetRenderTarget(null);
+                // Set colorData to null since we changed the data
+                colorData = null;
             }
 
             /// <summary>
@@ -105,18 +161,7 @@ namespace InfiniteTerrain
             /// <param name="quadTreeType"></param>
             public void Modify(Texture2D modifier, Vector2 position, QuadTreeType quadTreeType)
             {
-                // Translate the external position to internal
-                var iPos = position - this.position;
-                // Set the rendertarget to this chunk's
-                graphicsDevice.SetRenderTarget(renderTarget);
-                // Begin drawing to the spritebatch, using blendsate.opaque
-                // (this blendstate removes previously drawn colors, and only leaves the current drawn ones)
-                spriteBatch.Begin(blendState: BlendState.Opaque, effect: null);
-                // Draw the modifier texture to the rendertarget.
-                spriteBatch.Draw(modifier, iPos, Color.White);
-                spriteBatch.End();
-                // Set to the main rendertarget.
-                graphicsDevice.SetRenderTarget(null);
+                Modify(modifier, position);
                 // Insert a modifier rectangle into the quadtree.
                 quadTree.Insert(new Rectangle((int)position.X, (int)position.Y, modifier.Width,
                     modifier.Height), quadTreeType);
@@ -272,6 +317,18 @@ namespace InfiniteTerrain
                 (c) => rectangles.AddRange(c.FindCollidingRectangles(searchRectangle, searchType)));
             return rectangles;
         }
+
+        /// <summary>
+        /// Modifies the underlying collision quadtree.
+        /// </summary>
+        /// <param name="rectangle">The rectangle to apply.</param>
+        /// <param name="type">The new type of the area modified.</param>
+        public void ModifyQuadTree(Rectangle rectangle, QuadTreeType type)
+        {
+            // TODO: choose area according to rectangle size.
+            forEachVisibleChunk(c => c.Modify(rectangle, type));
+        }
+
         /// <summary>
         /// Applies a texture to the terrain on the specified position.
         /// Without updating the underlying QuadTree's.
