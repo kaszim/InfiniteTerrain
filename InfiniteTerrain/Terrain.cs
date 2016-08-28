@@ -326,7 +326,10 @@ namespace InfiniteTerrain
         public void ModifyQuadTree(Rectangle rectangle, QuadTreeType type)
         {
             // TODO: choose area according to rectangle size.
-            forEachVisibleChunk(c => c.Modify(rectangle, type));
+            var x = (int)rectangle.X / chunkWidth;
+            var y = (int)rectangle.Y / chunkHeight;
+            forEachChunkInArea(new Rectangle(x, y, 1, 1),
+                c => c.Modify(rectangle, type));
         }
 
         /// <summary>
