@@ -18,6 +18,21 @@ namespace InfiniteTerrain
         private WorldGenerator worldGenerator;
 
         /// <summary>
+        /// Wether or not to have debug mode on.
+        /// </summary>
+        public bool Debug
+        {
+            get
+            {
+                return terrain.Debug;
+            }
+            set
+            {
+                terrain.Debug = value;
+            }
+        }
+
+        /// <summary>
         /// Creates and initializes a World.
         /// </summary>
         /// <param name="graphicsDevice">The GraphicsDevice from Game class.</param>

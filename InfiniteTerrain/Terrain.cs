@@ -50,6 +50,11 @@ namespace InfiniteTerrain
         public int ChunkHeight => chunkHeight;
 
         /// <summary>
+        /// If set to true, things like a wireframe for the quadtree will be drawn.
+        /// </summary>
+        public bool Debug { get; set; }
+
+        /// <summary>
         /// Returns the color of a certain pixel.
         /// </summary>
         /// <returns>The color of the specified pixel.</returns>
@@ -73,6 +78,7 @@ namespace InfiniteTerrain
         /// </summary>
         class TerrainChunk
         {
+            private readonly Terrain terrain;
             private readonly RenderTarget2D renderTarget;
             private readonly GraphicsDevice graphicsDevice;
             private readonly SpriteBatch spriteBatch;
@@ -102,10 +108,12 @@ namespace InfiniteTerrain
             /// Creates a terrain chunk.
             /// </summary>
             /// <param name="graphicsDevice">The game's graphicsdevice.</param>
+            /// <param name="terrain">The Terrain object.</param>
             /// <param name="rectangle">The destination rectangle of this chunk.</param>
-            public TerrainChunk(GraphicsDevice graphicsDevice, Rectangle rectangle)
+            public TerrainChunk(GraphicsDevice graphicsDevice, Terrain terrain, Rectangle rectangle)
             {
                 this.graphicsDevice = graphicsDevice;
+                this.terrain = terrain;
                 this.rectangle = rectangle;
                 position = new Vector2(rectangle.X, rectangle.Y);
                 this.quadTree = new QuadTree(rectangle, QuadTreeType.Texture);
@@ -178,7 +186,8 @@ namespace InfiniteTerrain
             {
                 // Draws this chunk of terrain to the spritebatch
                 spriteBatch.Draw(renderTarget, Camera.WorldToScreenPosition(position), Color.White);
-                quadTree.Draw(spriteBatch);
+                if(terrain.Debug)
+                    quadTree.Draw(spriteBatch);
             }
         }
 
@@ -221,7 +230,7 @@ namespace InfiniteTerrain
                 chunks.Add(new List<TerrainChunk>());
                 for (int y = 0; y < this.height; y++)
                 {
-                    chunks[x].Add(new TerrainChunk(graphicsDevice, new Rectangle(x * chunkWidth,
+                    chunks[x].Add(new TerrainChunk(graphicsDevice, this, new Rectangle(x * chunkWidth,
                         y * chunkHeight, chunkWidth, chunkHeight)));
                 }
             }

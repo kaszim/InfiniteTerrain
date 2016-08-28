@@ -88,6 +88,8 @@ namespace InfiniteTerrain
                 Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y + 300*deltaTime);
             if (keyState.IsKeyDown(Keys.W))
                 Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y - 300 * deltaTime);
+            if (keyState.IsKeyDown(Keys.Q))
+                world.Debug = !world.Debug;
 
             world.Update(gameTime);
             fc.Update(deltaTime);

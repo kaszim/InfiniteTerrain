@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -141,7 +140,6 @@ namespace InfiniteTerrain
         /// Draws DEBUG rectangles of the quadtree quadtrants.
         /// </summary>
         /// <param name="spriteBatch">The spritebatch to draw to.</param>
-        [Conditional("DEBUG")]
         public void Draw(SpriteBatch spriteBatch)
         {
             if(isLeaf)
