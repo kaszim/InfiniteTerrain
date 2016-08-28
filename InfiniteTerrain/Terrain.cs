@@ -94,7 +94,7 @@ namespace InfiniteTerrain
                         colorData = new Color[renderTarget.Height * renderTarget.Width];
                         renderTarget.GetData<Color>(colorData);
                     }
-                    return colorData[x + y * renderTarget.Height];
+                    return colorData[x + y * renderTarget.Width];
                 }
             }
 
@@ -207,8 +207,8 @@ namespace InfiniteTerrain
             {
                 for (int y = 0; y < texture.Height; y++)
                 {
-                    colors[x + y * texture.Height] = Color.Transparent;
-                    colors2[x + y * texture2.Height] = Color.Green;
+                    colors[x + y * texture.Width] = Color.Transparent;
+                    colors2[x + y * texture2.Width] = Color.Green;
                 }
             }
             texture.SetData(colors);

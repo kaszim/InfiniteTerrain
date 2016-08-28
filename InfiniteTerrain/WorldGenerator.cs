@@ -50,6 +50,7 @@ namespace InfiniteTerrain
         /// <param name="location">Which chunk to generate.</param>
         public void GenerateChunk(Vector2 location)
         {
+            // Get the texture for this part
             graphicsDevice.SetRenderTarget(renderTarget);
             graphicsDevice.Clear(Color.Transparent);
             terrainShader.Parameters["camPos"].SetValue(location);
@@ -65,6 +66,22 @@ namespace InfiniteTerrain
             }
             spriteBatch.End();
             graphicsDevice.SetRenderTarget(null);
+
+            // Create the collider
+            var colorData = new Color[renderTarget.Width * renderTarget.Height];
+            renderTarget.GetData<Color>(colorData);
+            for (int x = 0; x < renderTarget.Width; x += 3)
+            {
+                int y;
+                for (y = 0; y < renderTarget.Height; y += 1)
+                {
+                    if (colorData[x + y * renderTarget.Width] != Color.Transparent)
+                        break;
+                }
+                var rec = new Rectangle(((int)location.X) * terrain.ChunkWidth + x, ((int)location.Y) * terrain.ChunkHeight, 3, y);
+                terrain.ModifyQuadTree(rec, QuadTreeType.Empty);
+            }
+
             terrain.ApplyTexture(renderTarget, new Vector2(location.X*terrain.ChunkWidth,
                 location.Y*terrain.ChunkHeight));
         }
@@ -75,9 +92,9 @@ namespace InfiniteTerrain
         /// <param name="rectangle">The surrounding rectangle (inclusive).</param>
         public void GenerateArea(Rectangle rectangle)
         {
-            for (int x = rectangle.X; x <= (rectangle.X + rectangle.Width); x++)
+            for (int x = rectangle.X; x < (rectangle.X + rectangle.Width); x++)
             {
-                for (int y = rectangle.Y; y <= (rectangle.Y + rectangle.Height); y++)
+                for (int y = rectangle.Y; y < (rectangle.Y + rectangle.Height); y++)
                 {
                     GenerateChunk(new Vector2(x, y));
                 }
