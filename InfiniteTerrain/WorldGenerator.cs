@@ -19,6 +19,11 @@ namespace InfiniteTerrain
         private Effect terrainShader;
         private RenderTarget2D renderTarget;
 
+        /// <summary>
+        /// Constructs the world generator object.
+        /// </summary>
+        /// <param name="terrain">The world's terrain.</param>
+        /// <param name="graphicsDevice">The GraphicsDevice.</param>
         public WorldGenerator(Terrain terrain, GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
@@ -39,6 +44,10 @@ namespace InfiniteTerrain
             terrainShader = content.Load<Effect>("TerrainGeneration");
         }
 
+        /// <summary>
+        /// Generates the specified chunk.
+        /// </summary>
+        /// <param name="location">Which chunk to generate.</param>
         public void GenerateChunk(Vector2 location)
         {
             graphicsDevice.SetRenderTarget(renderTarget);
@@ -61,9 +70,9 @@ namespace InfiniteTerrain
         }
 
         /// <summary>
-        /// 
+        /// Generate an area of terrain.
         /// </summary>
-        /// <param name="rectangle">inclusive</param>
+        /// <param name="rectangle">The surrounding rectangle (inclusive).</param>
         public void GenerateArea(Rectangle rectangle)
         {
             for (int x = rectangle.X; x <= (rectangle.X + rectangle.Width); x++)
