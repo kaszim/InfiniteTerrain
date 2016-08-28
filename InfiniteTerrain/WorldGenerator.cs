@@ -66,11 +66,13 @@ namespace InfiniteTerrain
         /// <param name="rectangle">inclusive</param>
         public void GenerateArea(Rectangle rectangle)
         {
-            for (float x = rectangle.X; x <= rectangle.Width; x++)
-                for (float y = rectangle.Y; y <= rectangle.Height; y++)
+            for (int x = rectangle.X; x <= (rectangle.X + rectangle.Width); x++)
+            {
+                for (int y = rectangle.Y; y <= (rectangle.Y + rectangle.Height); y++)
                 {
                     GenerateChunk(new Vector2(x, y));
                 }
+            }
         }
     }
 }
