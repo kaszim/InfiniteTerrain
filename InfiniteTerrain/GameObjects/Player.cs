@@ -30,7 +30,6 @@ namespace InfiniteTerrain.GameObjects
             var y = ((float)DistanceToTerrain) / 50f;
             var x = (int)MathHelper.LerpPrecise(-gravityFactor, gravityFactor, y) * 2f;
             Velocity = new Vector2(Velocity.X, Velocity.Y + x * deltaTime - gravityFactor * deltaTime);
-            Game1.gWindow.Title = Velocity.ToString();
 
             var keyState = Keyboard.GetState();
             if (keyState.IsKeyDown(Keys.Right))
