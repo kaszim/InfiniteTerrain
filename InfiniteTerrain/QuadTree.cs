@@ -45,8 +45,8 @@ namespace InfiniteTerrain
         private void split()
         {
             children = new QuadTree[4];
-            var halfWidth = (int)Math.Ceiling((double)rectangle.Width / 2);
-            var halfHeight = (int)Math.Ceiling((double)rectangle.Height / 2);
+            var halfWidth = (int)Math.Floor((double)rectangle.Width / 2);
+            var halfHeight = (int)Math.Floor((double)rectangle.Height / 2);
             children[0] = new QuadTree(new Rectangle(rectangle.X, rectangle.Y, halfWidth,
                 halfHeight), type);
             children[1] = new QuadTree(new Rectangle(rectangle.X + halfWidth, rectangle.Y,
@@ -122,7 +122,10 @@ namespace InfiniteTerrain
             {
                 // Dont go smaller than a certain value.
                 if (area <= minArea)
+                {
+                    type = newType;
                     return;
+                }
                 // If this is a leaf, split it up to contain the whole modifier rectangle.
                 if(isLeaf)
                     split();
@@ -143,7 +146,7 @@ namespace InfiniteTerrain
         {
             if(isLeaf)
                 C3.XNA.Primitives2D.DrawRectangle(spriteBatch, Camera.WorldToScreenRectangle(rectangle),
-                    Color.Black);
+                    type == QuadTreeType.Empty ? Color.Black : Color.Pink);
             else
                 foreach (var child in children)
                     child.Draw(spriteBatch);
