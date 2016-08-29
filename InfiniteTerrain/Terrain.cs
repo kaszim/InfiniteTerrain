@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace InfiniteTerrain
 {
@@ -14,6 +12,7 @@ namespace InfiniteTerrain
     /// </summary>
     class Terrain
     {
+        #region Fields
         readonly Texture2D texture;
         readonly Texture2D texture2;
         private readonly int chunkWidth;
@@ -26,7 +25,7 @@ namespace InfiniteTerrain
         private readonly GraphicsDevice graphicsDevice;
         // The spritebatch for this terrain instance.
         private readonly SpriteBatch spriteBatch;
-        private readonly List<List<TerrainChunk>> chunks;
+        private List<List<TerrainChunk>> chunks;
         // in chunks
         private readonly int width;
         private readonly int height;
@@ -72,6 +71,7 @@ namespace InfiniteTerrain
                 return chunk[iX, iY];
             }
         }
+        #endregion
 
         /// <summary>
         /// A chunk of terrain.
@@ -223,19 +223,9 @@ namespace InfiniteTerrain
             texture.SetData(colors);
             texture2.SetData(colors2);
 
-            // Initialize the chunk dictionary
-            chunks = new List<List<TerrainChunk>>();
-            for (int x = 0; x < this.width; x++)
-            {
-                chunks.Add(new List<TerrainChunk>());
-                for (int y = 0; y < this.height; y++)
-                {
-                    chunks[x].Add(new TerrainChunk(graphicsDevice, this, new Rectangle(x * chunkWidth,
-                        y * chunkHeight, chunkWidth, chunkHeight)));
-                }
-            }
         }
 
+        #region private helpers
         /// <summary>
         /// Applies a method on every visible chunk.
         /// </summary>
@@ -284,7 +274,9 @@ namespace InfiniteTerrain
                 }
             }
         }
+        #endregion
 
+        #region mutators
         /// <summary>
         /// Returns all rectangles which collides with the search rectangle and
         /// has the same type as the searchType. This search is done through all quadtrees.
@@ -371,6 +363,27 @@ namespace InfiniteTerrain
             forEachChunkInArea(new Rectangle(x, y, 1, 1),
                 (c) => c.Modify(texture, position, type));
         }
+        #endregion
+
+        #region XNA methods
+        /// <summary>
+        /// Loads World content.
+        /// </summary>
+        /// <param name="content">todo: describe content parameter on LoadContent</param>
+        public void LoadContent(ContentManager content)
+        {
+            // Initialize the chunk dictionary
+            chunks = new List<List<TerrainChunk>>();
+            for (int x = 0; x < this.width; x++)
+            {
+                chunks.Add(new List<TerrainChunk>());
+                for (int y = 0; y < this.height; y++)
+                {
+                    chunks[x].Add(new TerrainChunk(graphicsDevice, this, new Rectangle(x * chunkWidth,
+                        y * chunkHeight, chunkWidth, chunkHeight)));
+                }
+            }
+        }
 
         /// <summary>
         /// Runs update on the terrain.
@@ -407,5 +420,6 @@ namespace InfiniteTerrain
             forEachVisibleChunk((c) => c.Draw(spriteBatch));
             spriteBatch.End();
         }
+        #endregion
     }
 }

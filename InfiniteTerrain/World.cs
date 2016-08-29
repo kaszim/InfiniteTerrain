@@ -52,6 +52,7 @@ namespace InfiniteTerrain
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(graphicsDevice);
+            terrain.LoadContent(content);
             Add(new Player());
             worldGenerator.LoadContent(content);
             worldGenerator.GenerateArea(new Rectangle(0, 0,
