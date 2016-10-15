@@ -11,6 +11,8 @@ namespace InfiniteTerrain.GameObjects
         // Acceleration of this player
         private float acceleration = 2000f;
         private Texture2D modifier;
+        private Texture2D inverseModifier;
+        private Effect modifierEffect;
 
         public Player()
         {
@@ -29,6 +31,8 @@ namespace InfiniteTerrain.GameObjects
         private void Player_OnLoadContent(ContentManager content)
         {
             modifier = content.Load<Texture2D>("circle");
+            inverseModifier = content.Load<Texture2D>("inverseCircle");
+            modifierEffect = content.Load<Effect>("TerrainModifier");
         }
 
         private bool Player_OnUpdate(GameTime gameTime)
@@ -62,7 +66,16 @@ namespace InfiniteTerrain.GameObjects
                 // Get the center of the modifier
                 var center = new Vector2(Position.X + Size.X,
                     Position.Y - (modifier.Height >> 1));
-                modifyTerrain(modifier, center, BlendState.AlphaBlend, QuadTreeType.Texture);
+                modifyTerrain(modifier, center, BlendState.AlphaBlend, null, QuadTreeType.Texture);
+            }
+
+            if (keyState.IsKeyDown(Keys.X))
+            {
+                // Get the center of the modifier
+                var center = new Vector2(Position.X + Size.X,
+                      Position.Y - (inverseModifier.Height >> 1));
+                modifyTerrain(modifier, center, Terrain.InverseOpaque, null,
+                    QuadTreeType.Empty);
             }
 
             /*

@@ -261,10 +261,12 @@ namespace InfiniteTerrain.GameObjects
         /// <param name="texture">The texture to apply to the terrain.</param>
         /// <param name="pos">The position to apply it to.</param>
         /// <param name="blendstate"></param>
+        /// <param name="effect"></param>
         /// <param name="type">The type of the terrain.</param>
-        protected void modifyTerrain(Texture2D texture, Vector2 pos, BlendState blendstate, QuadTreeType type)
+        protected void modifyTerrain(Texture2D texture, Vector2 pos, BlendState blendstate,
+            Effect effect, QuadTreeType type)
         {
-            terrain.ApplyTexture(texture, pos, blendstate, type);
+            terrain.ApplyTexture(texture, pos, blendstate, effect, type);
         }
     }
 }
