@@ -206,23 +206,6 @@ namespace InfiniteTerrain
             spriteBatch = new SpriteBatch(graphicsDevice);
             nChunksHorizontal = (int)Math.Ceiling((double)Camera.Size.X / chunkWidth) + 1;
             nChunksVertical = (int)Math.Ceiling((double)Camera.Size.Y / chunkHeight) + 1;
-
-            // Placeholder
-            texture = new Texture2D(graphicsDevice, 100, 100);
-            texture2 = new Texture2D(graphicsDevice, 100, 100);
-            var colors = new Color[texture.Width * texture.Height];
-            var colors2 = new Color[texture.Width * texture.Height];
-            for (int x = 0; x < texture.Width; x++)
-            {
-                for (int y = 0; y < texture.Height; y++)
-                {
-                    colors[x + y * texture.Width] = Color.Transparent;
-                    colors2[x + y * texture2.Width] = Color.Green;
-                }
-            }
-            texture.SetData(colors);
-            texture2.SetData(colors2);
-
         }
 
         #region private helpers
@@ -391,23 +374,7 @@ namespace InfiniteTerrain
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public void Update(GameTime gameTime)
         {
-            // Drawing logic
-            var mouseState = Mouse.GetState();
-            var mousePos = Camera.ScreenToWorldPosition(new Vector2(mouseState.X, mouseState.Y));
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                // Get the center of the modifier
-                var center = new Vector2(mousePos.X - (texture.Width >> 1),
-                    mousePos.Y - (texture.Height >> 1));
-                ApplyTexture(texture, center, QuadTreeType.Empty);
-            }
-            else if (mouseState.RightButton == ButtonState.Pressed)
-            {
-                // Get the center of the modifier
-                var center = new Vector2(mousePos.X - (texture.Width >> 1),
-                    mousePos.Y - (texture.Height >> 1));
-                ApplyTexture(texture2, center, QuadTreeType.Texture);
-            }
+            
         }
 
         /// <summary>
