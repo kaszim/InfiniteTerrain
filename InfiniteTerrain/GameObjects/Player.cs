@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace InfiniteTerrain.GameObjects
@@ -9,11 +10,13 @@ namespace InfiniteTerrain.GameObjects
     {
         // Acceleration of this player
         private float acceleration = 2000f;
+        private Texture2D modifier;
 
         public Player()
         {
             OnUpdate += Player_OnUpdate;
             OnInitialize += Player_OnInitialize;
+            OnLoadContent += Player_OnLoadContent;
             Position = new Vector2(300);
             Size = new Point(25, 75);
         }
@@ -21,6 +24,11 @@ namespace InfiniteTerrain.GameObjects
         private void Player_OnInitialize()
         {
             MeasureDistanceToTerrain = true;
+        }
+
+        private void Player_OnLoadContent(ContentManager content)
+        {
+            modifier = content.Load<Texture2D>("circle");
         }
 
         private bool Player_OnUpdate(GameTime gameTime)
@@ -47,6 +55,14 @@ namespace InfiniteTerrain.GameObjects
             if (keyState.IsKeyDown(Keys.Up))
             {
                 Velocity = new Vector2(Velocity.X, Velocity.Y - acceleration * deltaTime);
+            }
+
+            if (keyState.IsKeyDown(Keys.Z))
+            {
+                // Get the center of the modifier
+                var center = new Vector2(Position.X + Size.X,
+                    Position.Y - (modifier.Height >> 1));
+                modifyTerrain(modifier, center, BlendState.AlphaBlend, QuadTreeType.Texture);
             }
 
             /*

@@ -254,5 +254,17 @@ namespace InfiniteTerrain.GameObjects
             C3.XNA.Primitives2D.FillRectangle(spriteBatch, Camera.WorldToScreenPosition(Position), new Vector2(Size.X, Size.Y), Color.BlueViolet);
             
         }
+
+        /// <summary>
+        /// Modifies the terrain if this gameobject is capable of it.
+        /// </summary>
+        /// <param name="texture">The texture to apply to the terrain.</param>
+        /// <param name="pos">The position to apply it to.</param>
+        /// <param name="blendstate"></param>
+        /// <param name="type">The type of the terrain.</param>
+        protected void modifyTerrain(Texture2D texture, Vector2 pos, BlendState blendstate, QuadTreeType type)
+        {
+            terrain.ApplyTexture(texture, pos, blendstate, type);
+        }
     }
 }

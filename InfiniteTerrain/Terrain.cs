@@ -143,7 +143,8 @@ namespace InfiniteTerrain
             /// </summary>
             /// <param name="modifier"></param>
             /// <param name="position">The external position to modify.</param>
-            public void Modify(Texture2D modifier, Vector2 position)
+            /// <param name="blendstate"></param>
+            public void Modify(Texture2D modifier, Vector2 position, BlendState blendstate)
             {
                 // Translate the external position to internal
                 var iPos = position - this.position;
@@ -151,7 +152,7 @@ namespace InfiniteTerrain
                 graphicsDevice.SetRenderTarget(renderTarget);
                 // Begin drawing to the spritebatch, using blendsate.opaque
                 // (this blendstate removes previously drawn colors, and only leaves the current drawn ones)
-                spriteBatch.Begin(blendState: BlendState.Opaque, effect: null);
+                spriteBatch.Begin(blendState: blendstate, effect: null);
                 // Draw the modifier texture to the rendertarget.
                 spriteBatch.Draw(modifier, iPos, Color.White);
                 spriteBatch.End();
@@ -166,10 +167,11 @@ namespace InfiniteTerrain
             /// </summary>
             /// <param name="modifier"></param>
             /// <param name="position">The external position to modify.</param>
+            /// <param name="blendstate"></param>
             /// <param name="quadTreeType"></param>
-            public void Modify(Texture2D modifier, Vector2 position, QuadTreeType quadTreeType)
+            public void Modify(Texture2D modifier, Vector2 position, BlendState blendstate, QuadTreeType quadTreeType)
             {
-                Modify(modifier, position);
+                Modify(modifier, position, blendstate);
                 // Insert a modifier rectangle into the quadtree.
                 quadTree.Insert(new Rectangle((int)position.X, (int)position.Y, modifier.Width,
                     modifier.Height), quadTreeType);
@@ -322,13 +324,14 @@ namespace InfiniteTerrain
         /// </summary>
         /// <param name="texture">The texture to apply.</param>
         /// <param name="position">The position to apply the texture to.</param>
-        public void ApplyTexture(Texture2D texture, Vector2 position)
+        /// <param name="blendstate"></param>
+        public void ApplyTexture(Texture2D texture, Vector2 position, BlendState blendstate)
         {
             //TODO: Depending on the size of the texture, choose area accordinly
             var x = (int)position.X / chunkWidth;
             var y = (int)position.Y / chunkHeight;
             forEachChunkInArea(new Rectangle(x, y, 1, 1),
-                (c) => c.Modify(texture, position));
+                (c) => c.Modify(texture, position, blendstate));
         }
 
         /// <summary>
@@ -337,14 +340,15 @@ namespace InfiniteTerrain
         /// </summary>
         /// <param name="texture">The texture to apply.</param>
         /// <param name="position">The position to apply the texture to.</param>
+        /// <param name="blendstate"></param>
         /// <param name="type">The new type of the QuadTree.</param>
-        public void ApplyTexture(Texture2D texture, Vector2 position, QuadTreeType type)
+        public void ApplyTexture(Texture2D texture, Vector2 position, BlendState blendstate, QuadTreeType type)
         {
             //TODO: Depending on the size of the texture, choose area accordinly
             var x = (int)position.X / chunkWidth;
             var y = (int)position.Y / chunkHeight;
             forEachChunkInArea(new Rectangle(x, y, 1, 1),
-                (c) => c.Modify(texture, position, type));
+                (c) => c.Modify(texture, position, blendstate, type));
         }
         #endregion
 

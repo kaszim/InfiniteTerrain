@@ -100,7 +100,7 @@ namespace InfiniteTerrain
             }
 
             terrain.ApplyTexture(renderTarget, new Vector2(location.X*terrain.ChunkWidth,
-                location.Y*terrain.ChunkHeight));
+                location.Y*terrain.ChunkHeight), BlendState.Opaque);
         }
 
         /// <summary>

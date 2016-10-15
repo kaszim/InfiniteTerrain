@@ -67,7 +67,7 @@ namespace InfiniteTerrain
         public void Update(GameTime gameTime)
         {
             terrain.Update(gameTime);
-            forEachIGameObject((gObject) => gObject.Update(gameTime);
+            forEachIGameObject((gObject) => gObject.Update(gameTime));
         }
 
         /// <summary>
