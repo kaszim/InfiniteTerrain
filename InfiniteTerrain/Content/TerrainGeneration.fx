@@ -240,16 +240,21 @@ float snoise(float2 v)
 // THE SOFTWARE.
 #endif
 
-
-
 sampler TextureSampler : register(s0);
-float2 camPos;
-float amp;
-float freq;
-float snowFalloff;
-float yOffset;
-int octaves;
-float persistence;
+extern float width;
+extern float height;
+extern float2 camPos;
+extern float amp;
+extern float freq;
+extern float snowFalloff;
+extern float yOffset;
+extern int octaves;
+extern float persistence;
+//extern texture dirtTexture;
+//sampler dirtTextureSampler : register(s1)
+//{
+//	Texture = <dirtTexture>;
+//};
 
 float4 PixelShaderFunction(float4 pos : SV_POSITION, float4 color1 : COLOR0, float2 texCoord : TEXCOORD0) : SV_TARGET0
 {
@@ -273,7 +278,7 @@ float4 PixelShaderFunction(float4 pos : SV_POSITION, float4 color1 : COLOR0, flo
 		if(texCoord.y + camPos.y < h+snowFalloff)
 			return float4(1, 1, 1, 1);
 		else
-			return float4(0, 1, 0, 1);
+			return float4(0,1,0,1);
 	}
 	return float4(0, 0, 0, 0);
 	

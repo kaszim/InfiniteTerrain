@@ -18,6 +18,8 @@ namespace InfiniteTerrain
         private SpriteBatch spriteBatch;
         private Effect terrainShader;
         private RenderTarget2D renderTarget;
+        private Texture2D dirt;
+        private Vector4[] dirtData;
 
         /// <summary>
         /// Constructs the world generator object.
@@ -42,6 +44,17 @@ namespace InfiniteTerrain
             renderTarget = new RenderTarget2D(graphicsDevice, terrain.ChunkWidth,
                 terrain.ChunkHeight);
             terrainShader = content.Load<Effect>("TerrainGeneration");
+            dirt = content.Load<Texture2D>("grassCenter");
+            var _dirtData = new Color[dirt.Width * dirt.Height];
+            dirtData = new Vector4[_dirtData.Length];
+            dirt.GetData(dirtData);
+            // Transform into shader color
+            for(int i = 0; i < _dirtData.Length; i++)
+            {
+                var c = _dirtData[i];
+                dirtData[i] = new Vector4((float)c.R / 255f, (float)c.G / 255f,
+                    (float)c.B / 255f, (float)c.A / 255f);
+            }
         }
 
         /// <summary>
@@ -53,6 +66,8 @@ namespace InfiniteTerrain
             // Get the texture for this part
             graphicsDevice.SetRenderTarget(renderTarget);
             graphicsDevice.Clear(Color.Transparent);
+            //terrainShader.Parameters["width"].SetValue(renderTarget.Width);
+            //terrainShader.Parameters["height"].SetValue(renderTarget.Height);
             terrainShader.Parameters["camPos"].SetValue(location);
             terrainShader.Parameters["amp"].SetValue(5f);
             terrainShader.Parameters["freq"].SetValue(0.5f);
@@ -60,6 +75,7 @@ namespace InfiniteTerrain
             terrainShader.Parameters["snowFalloff"].SetValue(0.2f);
             terrainShader.Parameters["octaves"].SetValue(8);
             terrainShader.Parameters["persistence"].SetValue(0.1f);
+            //terrainShader.Parameters["dirt"].SetValue(dirt);
             spriteBatch.Begin(effect: terrainShader);
             {
                 spriteBatch.Draw(texture, Vector2.Zero, Color.White);
@@ -72,6 +88,7 @@ namespace InfiniteTerrain
             renderTarget.GetData<Color>(colorData);
             for (int x = 0; x < renderTarget.Width; x += 3)
             {
+                // Find the pixel which is not a color
                 int y;
                 for (y = 0; y < renderTarget.Height; y += 1)
                 {
