@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace InfiniteTerrain.GameObjects
@@ -38,6 +39,11 @@ namespace InfiniteTerrain.GameObjects
         /// <param name="world">The world.</param>
         void Initialize(Terrain terrain, World world);
         /// <summary>
+        /// Loads the gameobjects content.
+        /// </summary>
+        /// <param name="Content">The game's content manager.</param>
+        void LoadContent(ContentManager Content);
+        /// <summary>
         /// Updates the GameObject. Applies physics and such.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
@@ -71,6 +77,10 @@ namespace InfiniteTerrain.GameObjects
         /// Called before the Initialization of a game object.
         /// </summary>
         public event Action OnInitialize;
+        /// <summary>
+        /// Called before the ContentLoad of a game object.
+        /// </summary>
+        public event Action<ContentManager> OnLoadContent;
         /// <summary>
         /// Called before any other update logic.
         /// Return false to stop the rest of the update logic of running.
@@ -133,6 +143,11 @@ namespace InfiniteTerrain.GameObjects
             this.world = world;
             this.MeasureDistanceToTerrain = false;
             OnInitialize?.Invoke();
+        }
+
+        void IGameObject.LoadContent(ContentManager Content)
+        {
+            OnLoadContent?.Invoke(Content);
         }
 
         /// <summary>

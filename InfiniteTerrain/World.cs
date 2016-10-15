@@ -54,6 +54,7 @@ namespace InfiniteTerrain
             spriteBatch = new SpriteBatch(graphicsDevice);
             terrain.LoadContent(content);
             Add(new Player());
+            forEachIGameObject((gObject) => gObject.LoadContent(content));
             worldGenerator.LoadContent(content);
             worldGenerator.GenerateArea(new Rectangle(0, 0,
                 terrain.NumberOfChunksHorizontally, terrain.NumberOfChunksVertically));
@@ -66,10 +67,7 @@ namespace InfiniteTerrain
         public void Update(GameTime gameTime)
         {
             terrain.Update(gameTime);
-            foreach (var gObject in gameObjects)
-            {
-                gObject.Update(gameTime);
-            }
+            forEachIGameObject((gObject) => gObject.Update(gameTime);
         }
 
         /// <summary>
@@ -80,10 +78,7 @@ namespace InfiniteTerrain
         {
             terrain.Draw(gameTime);
             spriteBatch.Begin();
-            foreach (var gObject in gameObjects)
-            {
-                gObject.Draw(spriteBatch);
-            }
+            forEachIGameObject((gObject) => gObject.Draw(spriteBatch));
             spriteBatch.End();
         }
 
@@ -96,6 +91,14 @@ namespace InfiniteTerrain
             var interfaceO = (IGameObject)o;
             interfaceO.Initialize(terrain, this);
             gameObjects.Add(interfaceO);
+        }
+
+        private void forEachIGameObject(Action<IGameObject> action)
+        {
+            foreach(var gObject in gameObjects)
+            {
+                action?.Invoke(gObject);
+            }
         }
     }
 }
