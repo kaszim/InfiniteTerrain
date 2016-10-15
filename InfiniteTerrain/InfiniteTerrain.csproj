@@ -80,7 +80,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Icon.ico" />
     <Content Include="Content\TerrainGeneration.fx" />
-    <Content Include="Content\TerrainModifier.fx" />
     <Content Include="OpenTK.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
