@@ -72,8 +72,8 @@ namespace InfiniteTerrain.GameObjects
             if (keyState.IsKeyDown(Keys.X))
             {
                 // Get the center of the modifier
-                var center = new Vector2(Position.X + Size.X,
-                      Position.Y - (inverseModifier.Height >> 1));
+                var center = new Vector2(Position.X - (Size.X >> 1),
+                      Position.Y + (inverseModifier.Height));
                 modifyTerrain(modifier, center, Terrain.InverseOpaque, null,
                     QuadTreeType.Empty);
             }
