@@ -159,7 +159,7 @@ namespace InfiniteTerrain
             /// <param name="position">The external position to modify.</param>
             /// <param name="blendstate"></param>
             /// <param name="effect"></param>
-            public void Modify(Texture2D modifier, Vector2 position, BlendState blendstate, 
+            public void Modify(Texture2D modifier, Vector2 position, BlendState blendstate,
                 Effect effect)
             {
                 // Translate the external position to internal
@@ -317,7 +317,7 @@ namespace InfiniteTerrain
             var ymin = Math.Max(y - boundary.Y, 0);
             var xmax = Math.Min(x + boundary.X, NumberOfChunksHorizontally - 1);
             var ymax = Math.Min(y + boundary.Y, NumberOfChunksVertically - 1);
-            forEachChunkInArea(new Rectangle(xmin, ymin, boundary.X, boundary.Y), 
+            forEachChunkInArea(new Rectangle(xmin, ymin, boundary.X, boundary.Y),
                 (c) => rectangles.AddRange(c.FindCollidingRectangles(searchRectangle, searchType)));
             return rectangles;
         }
@@ -400,7 +400,6 @@ namespace InfiniteTerrain
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public void Update(GameTime gameTime)
         {
-            
         }
 
         /// <summary>

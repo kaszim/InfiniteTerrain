@@ -44,17 +44,6 @@ namespace InfiniteTerrain
             renderTarget = new RenderTarget2D(graphicsDevice, terrain.ChunkWidth,
                 terrain.ChunkHeight);
             terrainShader = content.Load<Effect>("TerrainGeneration");
-            dirt = content.Load<Texture2D>("grassCenter");
-            var _dirtData = new Color[dirt.Width * dirt.Height];
-            dirtData = new Vector4[_dirtData.Length];
-            dirt.GetData(dirtData);
-            // Transform into shader color
-            for(int i = 0; i < _dirtData.Length; i++)
-            {
-                var c = _dirtData[i];
-                dirtData[i] = new Vector4((float)c.R / 255f, (float)c.G / 255f,
-                    (float)c.B / 255f, (float)c.A / 255f);
-            }
         }
 
         /// <summary>
