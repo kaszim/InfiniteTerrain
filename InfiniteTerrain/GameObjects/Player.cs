@@ -18,9 +18,11 @@ namespace InfiniteTerrain.GameObjects
             OnUpdate += Player_OnUpdate;
             OnInitialize += Player_OnInitialize;
             OnLoadContent += Player_OnLoadContent;
+            OnDraw += Player_OnDraw;
             Position = new Vector2(300);
             Size = new Point(25, 75);
         }
+
 
         private void Player_OnInitialize()
         {
@@ -61,8 +63,8 @@ namespace InfiniteTerrain.GameObjects
             if (keyState.IsKeyDown(Keys.Z))
             {
                 // Get the center of the modifier
-                var center = new Vector2(Position.X + Size.X,
-                    Position.Y - (modifier.Height >> 1));
+                var center = new Vector2(Position.X - (Size.X >> 1),
+                      Position.Y + (modifier.Height));
                 modifyTerrain(modifier, center, BlendState.AlphaBlend, null, QuadTreeType.Texture);
             }
 
@@ -97,5 +99,12 @@ namespace InfiniteTerrain.GameObjects
 
             return true;
         }
+
+        private bool Player_OnDraw(SpriteBatch arg)
+        {
+            C3.XNA.Primitives2D.FillRectangle(arg, Camera.WorldToScreenPosition(Position), new Vector2(Size.X, Size.Y), Color.BlueViolet);
+            return true;
+        }
+
     }
 }

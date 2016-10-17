@@ -251,8 +251,6 @@ namespace InfiniteTerrain.GameObjects
                 foreach (Func<SpriteBatch, bool> delg in OnDraw.GetInvocationList())
                     if (!delg.Invoke(spriteBatch))
                         return;
-            C3.XNA.Primitives2D.FillRectangle(spriteBatch, Camera.WorldToScreenPosition(Position), new Vector2(Size.X, Size.Y), Color.BlueViolet);
-            
         }
 
         /// <summary>

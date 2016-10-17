@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using InfiniteTerrain.GameObjects;
 
 namespace InfiniteTerrain
 {
@@ -38,9 +39,15 @@ namespace InfiniteTerrain
         /// </summary>
         protected override void Initialize()
         {
-            Camera.Initialize(new Point(graphics.PreferredBackBufferWidth,
-                graphics.PreferredBackBufferHeight));
-            world = new World(GraphicsDevice);
+            var wSize = new Point(10000, 5000);
+            var c = new Camera(new Point(graphics.PreferredBackBufferWidth,
+                graphics.PreferredBackBufferHeight), wSize);
+            Camera.Initialize(c);
+            world = new World(GraphicsDevice, wSize);
+            var plr = new Player();
+            world.Add(plr);
+            c.Follow = plr;
+            world.Add(c);
 
             base.Initialize();
         }
@@ -80,20 +87,13 @@ namespace InfiniteTerrain
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             var keyState = Keyboard.GetState();
-            if (keyState.IsKeyDown(Keys.D))
-                Camera.Position = new Vector2(Camera.Position.X + 300*deltaTime, Camera.Position.Y);
-            if (keyState.IsKeyDown(Keys.A))
-                Camera.Position = new Vector2(Camera.Position.X - 300*deltaTime, Camera.Position.Y);
-            if (keyState.IsKeyDown(Keys.S))
-                Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y + 300*deltaTime);
-            if (keyState.IsKeyDown(Keys.W))
-                Camera.Position = new Vector2(Camera.Position.X, Camera.Position.Y - 300 * deltaTime);
             if (keyState.IsKeyDown(Keys.Q))
                 world.Debug = !world.Debug;
 
             world.Update(gameTime);
             fc.Update(deltaTime);
             //Window.Title = $"FPS {fc.AverageFramesPerSecond}";
+            Window.Title = $" {Camera.ActiveCamera.Position}";
             base.Update(gameTime);
         }
 

@@ -219,13 +219,13 @@ namespace InfiniteTerrain
         public Terrain(GraphicsDevice graphicsDevice, int width, int height)
         {
             this.graphicsDevice = graphicsDevice;
-            chunkWidth = Camera.Size.X / 2;
-            chunkHeight = Camera.Size.Y / 2;
+            chunkWidth = Camera.ActiveCamera.Size.X / 2;
+            chunkHeight = Camera.ActiveCamera.Size.Y / 2;
             this.width = (int)Math.Ceiling((double)width/chunkWidth);
             this.height = (int)Math.Ceiling((double)height /chunkHeight);
             spriteBatch = new SpriteBatch(graphicsDevice);
-            nChunksHorizontal = (int)Math.Ceiling((double)Camera.Size.X / chunkWidth) + 1;
-            nChunksVertical = (int)Math.Ceiling((double)Camera.Size.Y / chunkHeight) + 1;
+            nChunksHorizontal = (int)Math.Ceiling((double)Camera.ActiveCamera.Size.X / chunkWidth) + 1;
+            nChunksVertical = (int)Math.Ceiling((double)Camera.ActiveCamera.Size.Y / chunkHeight) + 1;
         }
 
         #region private helpers
@@ -235,8 +235,8 @@ namespace InfiniteTerrain
         /// <param name="action">The method to invoke.</param>
         private void forEachVisibleChunk(Action<TerrainChunk> action)
         {
-            var currCHori = (int)Camera.Position.X / chunkWidth;
-            var currCVert = (int)Camera.Position.Y / chunkHeight;
+            var currCHori = (int)Camera.ActiveCamera.Position.X / chunkWidth;
+            var currCVert = (int)Camera.ActiveCamera.Position.Y / chunkHeight;
             var lastChunkHori = currCHori + nChunksHorizontal;
             var lastChunkVert = currCVert + nChunksVertical;
 

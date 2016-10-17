@@ -36,10 +36,11 @@ namespace InfiniteTerrain
         /// Creates and initializes a World.
         /// </summary>
         /// <param name="graphicsDevice">The GraphicsDevice from Game class.</param>
-        public World(GraphicsDevice graphicsDevice)
+        /// <param name="size">Size of the world.</param>
+        public World(GraphicsDevice graphicsDevice, Point size)
         {
             this.graphicsDevice = graphicsDevice;
-            terrain = new Terrain(graphicsDevice, 10000, 5000);
+            terrain = new Terrain(graphicsDevice, size.X, size.Y);
             gameObjects = new HashSet<IGameObject>();
             worldGenerator = new WorldGenerator(terrain, graphicsDevice);
         }
@@ -53,7 +54,6 @@ namespace InfiniteTerrain
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(graphicsDevice);
             terrain.LoadContent(content);
-            Add(new Player());
             forEachIGameObject((gObject) => gObject.LoadContent(content));
             worldGenerator.LoadContent(content);
             worldGenerator.GenerateArea(new Rectangle(0, 0,
