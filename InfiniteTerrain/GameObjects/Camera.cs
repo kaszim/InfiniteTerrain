@@ -34,10 +34,7 @@ namespace InfiniteTerrain
         /// <summary>
         /// Wether or not the follow logic is active
         /// </summary>
-        public bool FollowActive
-        {
-            get { return worldSize != Point.Zero; }
-        }
+        public bool FollowActive => worldSize != Point.Zero;
 
         /// <summary>
         /// Initializes the world camera.
