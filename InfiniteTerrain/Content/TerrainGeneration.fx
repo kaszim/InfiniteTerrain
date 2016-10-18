@@ -250,6 +250,7 @@ extern float snowFalloff;
 extern float yOffset;
 extern int octaves;
 extern float persistence;
+extern float scale;
 //extern texture dirtTexture;
 //sampler dirtTextureSampler : register(s1)
 //{
@@ -264,7 +265,7 @@ float4 PixelShaderFunction(float4 pos : SV_POSITION, float4 color1 : COLOR0, flo
 	float amplitude = 1;
 	float maxValue = 0;  // Used for normalizing result to 0.0 - 1.0
 	for (int i = 0; i<octaves; i++) {
-		total += snoise(frequency * float2(texCoord.x + camPos.x, 1)) * amplitude;
+		total += snoise(frequency * float2((texCoord.x + camPos.x) * scale, 1)) * amplitude;
 
 		maxValue += amplitude;
 

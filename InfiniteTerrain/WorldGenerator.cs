@@ -64,10 +64,11 @@ namespace InfiniteTerrain
             terrainShader.Parameters["camPos"].SetValue(location + offset);
             terrainShader.Parameters["amp"].SetValue(5f);
             terrainShader.Parameters["freq"].SetValue(0.4f);
-            terrainShader.Parameters["yOffset"].SetValue(1f);
+            terrainShader.Parameters["yOffset"].SetValue(3f);
             terrainShader.Parameters["snowFalloff"].SetValue(0.2f);
             terrainShader.Parameters["octaves"].SetValue(8);
-            terrainShader.Parameters["persistence"].SetValue(0.1f);
+            terrainShader.Parameters["scale"].SetValue(0.5f);
+            terrainShader.Parameters["persistence"].SetValue(0.05f);
             //terrainShader.Parameters["dirt"].SetValue(dirt);
             spriteBatch.Begin(effect: terrainShader);
             {
