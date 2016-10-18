@@ -12,7 +12,7 @@ namespace InfiniteTerrain
     class WorldGenerator
     {
         private GraphicsDevice graphicsDevice;
-        private Terrain terrain;
+        public Terrain Terrain { get; set; }
         // the texture to use for chunkGenerating
         private Texture2D texture;
         private SpriteBatch spriteBatch;
@@ -20,6 +20,9 @@ namespace InfiniteTerrain
         private RenderTarget2D renderTarget;
         private Texture2D dirt;
         private Vector4[] dirtData;
+        private Vector2 offset;
+
+        private static Random random = new Random();
 
         /// <summary>
         /// Constructs the world generator object.
@@ -29,7 +32,8 @@ namespace InfiniteTerrain
         public WorldGenerator(Terrain terrain, GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
-            this.terrain = terrain;
+            this.Terrain = terrain;
+            offset = new Vector2(10000f / random.Next(5000), 0);
         }
 
         /// <summary>
@@ -40,9 +44,9 @@ namespace InfiniteTerrain
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(graphicsDevice);
-            texture = new Texture2D(graphicsDevice, terrain.ChunkWidth, terrain.ChunkHeight);
-            renderTarget = new RenderTarget2D(graphicsDevice, terrain.ChunkWidth,
-                terrain.ChunkHeight);
+            texture = new Texture2D(graphicsDevice, Terrain.ChunkWidth, Terrain.ChunkHeight);
+            renderTarget = new RenderTarget2D(graphicsDevice, Terrain.ChunkWidth,
+                Terrain.ChunkHeight);
             terrainShader = content.Load<Effect>("TerrainGeneration");
         }
 
@@ -57,9 +61,9 @@ namespace InfiniteTerrain
             graphicsDevice.Clear(Color.Transparent);
             //terrainShader.Parameters["width"].SetValue(renderTarget.Width);
             //terrainShader.Parameters["height"].SetValue(renderTarget.Height);
-            terrainShader.Parameters["camPos"].SetValue(location);
+            terrainShader.Parameters["camPos"].SetValue(location + offset);
             terrainShader.Parameters["amp"].SetValue(5f);
-            terrainShader.Parameters["freq"].SetValue(0.5f);
+            terrainShader.Parameters["freq"].SetValue(0.4f);
             terrainShader.Parameters["yOffset"].SetValue(1f);
             terrainShader.Parameters["snowFalloff"].SetValue(0.2f);
             terrainShader.Parameters["octaves"].SetValue(8);
@@ -84,12 +88,12 @@ namespace InfiniteTerrain
                     if (colorData[x + y * renderTarget.Width] != Color.Transparent)
                         break;
                 }
-                var rec = new Rectangle(((int)location.X) * terrain.ChunkWidth + x, ((int)location.Y) * terrain.ChunkHeight, 3, y);
-                terrain.ModifyQuadTree(rec, TerrainType.Empty);
+                var rec = new Rectangle(((int)location.X) * Terrain.ChunkWidth + x, ((int)location.Y) * Terrain.ChunkHeight, 3, y);
+                Terrain.ModifyQuadTree(rec, TerrainType.Empty);
             }
 
-            terrain.ApplyTexture(renderTarget, new Vector2(location.X*terrain.ChunkWidth,
-                location.Y*terrain.ChunkHeight), BlendState.Opaque, null);
+            Terrain.ApplyTexture(renderTarget, new Vector2(location.X*Terrain.ChunkWidth,
+                location.Y*Terrain.ChunkHeight), BlendState.Opaque, null);
         }
 
         /// <summary>

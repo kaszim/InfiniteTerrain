@@ -276,9 +276,9 @@ float4 PixelShaderFunction(float4 pos : SV_POSITION, float4 color1 : COLOR0, flo
 	if (texCoord.y + camPos.y > h)
 	{
 		if(texCoord.y + camPos.y < h+snowFalloff)
-			return float4(1, 1, 1, 1);
+			return float4(34.0f/255, 139.0f/255, 34.0f/255, 1);
 		else
-			return float4(0,1,0,1);
+			return float4(139.0f/255, 69.0f/255, 19.0f/255, 1);
 	}
 	return float4(0, 0, 0, 0);
 	

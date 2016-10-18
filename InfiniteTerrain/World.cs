@@ -14,6 +14,7 @@ namespace InfiniteTerrain
         private readonly GraphicsDevice graphicsDevice;
         private SpriteBatch spriteBatch;
         private readonly Terrain terrain;
+        private readonly Terrain backgroundTerrain;
         private readonly HashSet<IGameObject> gameObjects;
         private WorldGenerator worldGenerator;
 
@@ -41,8 +42,9 @@ namespace InfiniteTerrain
         {
             this.graphicsDevice = graphicsDevice;
             terrain = new Terrain(graphicsDevice, size.X, size.Y);
+            backgroundTerrain = new Terrain(graphicsDevice, size.X, size.Y);
             gameObjects = new HashSet<IGameObject>();
-            worldGenerator = new WorldGenerator(terrain, graphicsDevice);
+            worldGenerator = new WorldGenerator(backgroundTerrain, graphicsDevice);
         }
 
         /// <summary>
@@ -53,9 +55,19 @@ namespace InfiniteTerrain
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(graphicsDevice);
+            backgroundTerrain.LoadContent(content);
             terrain.LoadContent(content);
             forEachIGameObject((gObject) => gObject.LoadContent(content));
+            //set background color to gray
+            backgroundTerrain.Color = Color.DarkSlateGray;
             worldGenerator.LoadContent(content);
+            // First generate backgroundterrain
+            worldGenerator.GenerateArea(
+                new Rectangle(0, 0,
+                backgroundTerrain.NumberOfChunksHorizontally,
+                backgroundTerrain.NumberOfChunksVertically));
+            // Then the "real" one
+            worldGenerator.Terrain = terrain;
             worldGenerator.GenerateArea(new Rectangle(0, 0,
                 terrain.NumberOfChunksHorizontally, terrain.NumberOfChunksVertically));
         }
@@ -66,6 +78,7 @@ namespace InfiniteTerrain
         /// <param name="gameTime">A snapshot of timing values.</param>
         public void Update(GameTime gameTime)
         {
+            backgroundTerrain.Update(gameTime);
             terrain.Update(gameTime);
             forEachIGameObject((gObject) => gObject.Update(gameTime));
         }
@@ -76,6 +89,7 @@ namespace InfiniteTerrain
         /// <param name="gameTime">A snapshot of timing values.</param>
         public void Draw(GameTime gameTime)
         {
+            backgroundTerrain.Draw(gameTime);
             terrain.Draw(gameTime);
             spriteBatch.Begin();
             forEachIGameObject((gObject) => gObject.Draw(spriteBatch));

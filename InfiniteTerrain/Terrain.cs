@@ -73,6 +73,11 @@ namespace InfiniteTerrain
         }
 
         /// <summary>
+        /// The terrains overall color. Default to none.
+        /// </summary>
+        public Color Color { get; set; } = Color.White;
+
+        /// <summary>
         /// A inverse opaque blendstate. Essentially meaning that the texture removes instead
         /// of overwriting.
         /// </summary>
@@ -202,10 +207,11 @@ namespace InfiniteTerrain
             /// Draws the terrain chunk to the spritebatch.
             /// </summary>
             /// <param name="spriteBatch">The spritebatch to draw to.</param>
-            public void Draw(SpriteBatch spriteBatch)
+            /// <param name="color">The chunks color.</param>
+            public void Draw(SpriteBatch spriteBatch, Color color)
             {
                 // Draws this chunk of terrain to the spritebatch
-                spriteBatch.Draw(renderTarget, Camera.WorldToScreenPosition(position), Color.White);
+                spriteBatch.Draw(renderTarget, Camera.WorldToScreenPosition(position), color);
                 if(terrain.Debug)
                     quadTree.Draw(spriteBatch);
             }
@@ -409,7 +415,7 @@ namespace InfiniteTerrain
         public void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            forEachVisibleChunk((c) => c.Draw(spriteBatch));
+            forEachVisibleChunk((c) => c.Draw(spriteBatch, Color));
             spriteBatch.End();
         }
         #endregion
