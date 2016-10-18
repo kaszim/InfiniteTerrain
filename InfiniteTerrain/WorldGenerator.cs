@@ -11,18 +11,16 @@ namespace InfiniteTerrain
 {
     class WorldGenerator
     {
+        private static Random random = new Random();
         private GraphicsDevice graphicsDevice;
-        public Terrain Terrain { get; set; }
         // the texture to use for chunkGenerating
         private Texture2D texture;
         private SpriteBatch spriteBatch;
         private Effect terrainShader;
         private RenderTarget2D renderTarget;
-        private Texture2D dirt;
-        private Vector4[] dirtData;
         private Vector2 offset;
 
-        private static Random random = new Random();
+        public Terrain Terrain { get; set; }
 
         /// <summary>
         /// Constructs the world generator object.
@@ -59,8 +57,6 @@ namespace InfiniteTerrain
             // Get the texture for this part
             graphicsDevice.SetRenderTarget(renderTarget);
             graphicsDevice.Clear(Color.Transparent);
-            //terrainShader.Parameters["width"].SetValue(renderTarget.Width);
-            //terrainShader.Parameters["height"].SetValue(renderTarget.Height);
             terrainShader.Parameters["camPos"].SetValue(location + offset);
             terrainShader.Parameters["amp"].SetValue(5f);
             terrainShader.Parameters["freq"].SetValue(0.4f);
@@ -69,7 +65,6 @@ namespace InfiniteTerrain
             terrainShader.Parameters["octaves"].SetValue(8);
             terrainShader.Parameters["scale"].SetValue(0.5f);
             terrainShader.Parameters["persistence"].SetValue(0.05f);
-            //terrainShader.Parameters["dirt"].SetValue(dirt);
             spriteBatch.Begin(effect: terrainShader);
             {
                 spriteBatch.Draw(texture, Vector2.Zero, Color.White);
