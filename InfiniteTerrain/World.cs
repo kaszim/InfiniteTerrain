@@ -16,7 +16,7 @@ namespace InfiniteTerrain
         private readonly Terrain terrain;
         private readonly Terrain backgroundTerrain;
         private readonly HashSet<IGameObject> gameObjects;
-        private WorldGenerator worldGenerator;
+        private TerrainGenerator worldGenerator;
 
         /// <summary>
         /// Wether or not to have debug mode on.
@@ -44,7 +44,7 @@ namespace InfiniteTerrain
             terrain = new Terrain(graphicsDevice, size.X, size.Y);
             backgroundTerrain = new Terrain(graphicsDevice, size.X, size.Y);
             gameObjects = new HashSet<IGameObject>();
-            worldGenerator = new WorldGenerator(backgroundTerrain, graphicsDevice);
+            worldGenerator = new TerrainGenerator(backgroundTerrain, graphicsDevice);
         }
 
         /// <summary>

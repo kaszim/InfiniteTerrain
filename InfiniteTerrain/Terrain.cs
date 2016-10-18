@@ -225,8 +225,8 @@ namespace InfiniteTerrain
         public Terrain(GraphicsDevice graphicsDevice, int width, int height)
         {
             this.graphicsDevice = graphicsDevice;
-            chunkWidth = Camera.ActiveCamera.Size.X / 2;
-            chunkHeight = Camera.ActiveCamera.Size.Y / 2;
+            chunkWidth = 70*100;
+            chunkHeight = 70*50;
             this.width = (int)Math.Ceiling((double)width/chunkWidth);
             this.height = (int)Math.Ceiling((double)height /chunkHeight);
             spriteBatch = new SpriteBatch(graphicsDevice);

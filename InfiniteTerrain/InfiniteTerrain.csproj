@@ -67,6 +67,7 @@
     <Compile Include="Terrain.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="World.cs" />
+    <Compile Include="TerrainGeneratorCPU.cs" />
     <Compile Include="WorldGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
