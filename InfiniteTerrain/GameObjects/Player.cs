@@ -31,7 +31,7 @@ namespace InfiniteTerrain.GameObjects
 
         private void Player_OnLoadContent(ContentManager content)
         {
-            modifier = content.Load<Texture2D>("circle");
+            modifier = content.Load<Texture2D>("grassCenter_rounded");
         }
 
         private bool Player_OnUpdate(GameTime gameTime)
@@ -73,8 +73,24 @@ namespace InfiniteTerrain.GameObjects
                 // Get the center of the modifier
                 var center = new Vector2(Position.X - (Size.X >> 1),
                       Position.Y + (modifier.Height));
-                modifyTerrain(modifier, center, Terrain.InverseOpaque, null,
-                    TerrainType.Empty);
+                modifyTerrain(modifier, center, Terrain.InverseOpaque, null, TerrainType.Empty);
+            }
+
+            var mouseState = Mouse.GetState();
+            var mousePos = Camera.ScreenToWorldPosition(new Vector2(mouseState.X, mouseState.Y));
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                // Get the center of the modifier
+                var center = new Vector2(mousePos.X - (modifier.Width >> 1),
+                    mousePos.Y - (modifier.Height >> 1));
+                modifyTerrain(modifier, center, Terrain.InverseOpaque, null, TerrainType.Empty);
+            }
+            else if (mouseState.RightButton == ButtonState.Pressed)
+            {
+                // Get the center of the modifier
+                var center = new Vector2(mousePos.X - (modifier.Width >> 1),
+                    mousePos.Y - (modifier.Height >> 1));
+                modifyTerrain(modifier, center, BlendState.AlphaBlend, null, TerrainType.Texture);
             }
 
             return true;
