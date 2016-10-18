@@ -65,7 +65,7 @@ namespace InfiniteTerrain.GameObjects
                 // Get the center of the modifier
                 var center = new Vector2(Position.X - (Size.X >> 1),
                       Position.Y + (modifier.Height));
-                modifyTerrain(modifier, center, BlendState.AlphaBlend, null, QuadTreeType.Texture);
+                modifyTerrain(modifier, center, BlendState.AlphaBlend, null, TerrainType.Texture);
             }
 
             if (keyState.IsKeyDown(Keys.X))
@@ -74,7 +74,7 @@ namespace InfiniteTerrain.GameObjects
                 var center = new Vector2(Position.X - (Size.X >> 1),
                       Position.Y + (modifier.Height));
                 modifyTerrain(modifier, center, Terrain.InverseOpaque, null,
-                    QuadTreeType.Empty);
+                    TerrainType.Empty);
             }
 
             return true;

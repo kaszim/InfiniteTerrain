@@ -130,7 +130,7 @@ namespace InfiniteTerrain
                 this.terrain = terrain;
                 this.rectangle = rectangle;
                 position = new Vector2(rectangle.X, rectangle.Y);
-                this.quadTree = new QuadTree(rectangle, QuadTreeType.Texture);
+                this.quadTree = new QuadTree(rectangle, TerrainType.Texture);
                 renderTarget = new RenderTarget2D(graphicsDevice, rectangle.Width, rectangle.Height,
                     false,
                     SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
@@ -146,7 +146,7 @@ namespace InfiniteTerrain
             /// </summary>
             /// <param name="rectangle">todo: describe rectangle parameter on Modify</param>
             /// <param name="quadTreeType">todo: describe quadTreeType parameter on Modify</param>
-            public void Modify(Rectangle rectangle, QuadTreeType quadTreeType)
+            public void Modify(Rectangle rectangle, TerrainType quadTreeType)
             {
                 // Insert a modifier rectangle into the quadtree.
                 quadTree.Insert(rectangle, quadTreeType);
@@ -187,7 +187,7 @@ namespace InfiniteTerrain
             /// <param name="effect"></param>
             /// <param name="quadTreeType"></param>
             public void Modify(Texture2D modifier, Vector2 position, BlendState blendstate,
-                Effect effect, QuadTreeType quadTreeType)
+                Effect effect, TerrainType quadTreeType)
             {
                 Modify(modifier, position, blendstate, effect);
                 // Insert a modifier rectangle into the quadtree.
@@ -196,7 +196,7 @@ namespace InfiniteTerrain
             }
 
             public List<Rectangle> FindCollidingRectangles(Rectangle searchRectangle,
-                QuadTreeType searchType) => quadTree.FindCollidingLeaves(searchRectangle, searchType);
+                TerrainType searchType) => quadTree.FindCollidingLeaves(searchRectangle, searchType);
 
             /// <summary>
             /// Draws the terrain chunk to the spritebatch.
@@ -285,9 +285,9 @@ namespace InfiniteTerrain
         /// has the same type as the searchType. This search is done through all quadtrees.
         /// </summary>
         /// <param name="searchRectangle">The rectangle to test against.</param>
-        /// <param name="searchType">The QuadTreeType to test against.</param>
+        /// <param name="searchType">The Type to test against.</param>
         /// <returns>A list of rectangles in the terrain which collides wiht searchRectangle.</returns>
-        public List<Rectangle> GetCollidingRectangles(Rectangle searchRectangle, QuadTreeType searchType)
+        public List<Rectangle> GetCollidingRectangles(Rectangle searchRectangle, TerrainType searchType)
         {
             var rectangles = new List<Rectangle>();
             foreach(var xbucket in chunks)
@@ -305,10 +305,10 @@ namespace InfiniteTerrain
         /// the search would be in the following interval: X: [0, 4] Y: [0, 4].
         /// </summary>
         /// <param name="searchRectangle">The rectangle to test against.</param>
-        /// <param name="searchType">The QuadTreeType to test against.</param>
+        /// <param name="searchType">The Type to test against.</param>
         /// <param name="boundary">The specied boundary to search within.</param>
         /// <returns>A list of rectangles in the terrain which collides wiht searchRectangle.</returns>
-        public List<Rectangle> GetCollidingRectangles(Rectangle searchRectangle, QuadTreeType searchType, Point boundary)
+        public List<Rectangle> GetCollidingRectangles(Rectangle searchRectangle, TerrainType searchType, Point boundary)
         {
             var rectangles = new List<Rectangle>();
             var x = searchRectangle.X / chunkWidth;
@@ -327,7 +327,7 @@ namespace InfiniteTerrain
         /// </summary>
         /// <param name="rectangle">The rectangle to apply.</param>
         /// <param name="type">The new type of the area modified.</param>
-        public void ModifyQuadTree(Rectangle rectangle, QuadTreeType type)
+        public void ModifyQuadTree(Rectangle rectangle, TerrainType type)
         {
             // TODO: choose area according to rectangle size.
             var x = (int)rectangle.X / chunkWidth;
@@ -364,7 +364,7 @@ namespace InfiniteTerrain
         /// <param name="effect"></param>
         /// <param name="type">The new type of the QuadTree.</param>
         public void ApplyTexture(Texture2D texture, Vector2 position, BlendState blendstate,
-            Effect effect, QuadTreeType type)
+            Effect effect, TerrainType type)
         {
             //TODO: Depending on the size of the texture, choose area accordinly
             var x = (int)position.X / chunkWidth;

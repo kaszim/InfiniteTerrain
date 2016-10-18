@@ -177,7 +177,7 @@ namespace InfiniteTerrain.GameObjects
             // Collision
             Position += Velocity * deltaTime;
             // TODO: Change search quadrants
-            var recs = terrain.GetCollidingRectangles(Rectangle, QuadTreeType.Texture, new Point(1));
+            var recs = terrain.GetCollidingRectangles(Rectangle, TerrainType.Texture, new Point(1));
             foreach (Rectangle other in recs)
             {
                 solveCollsion(other);
@@ -192,7 +192,7 @@ namespace InfiniteTerrain.GameObjects
                 {
                     recs = terrain.GetCollidingRectangles(
                         new Rectangle(Rectangle.X + (Rectangle.Width >> 1), Rectangle.Y + Rectangle.Height, 1, i),
-                        QuadTreeType.Texture, new Point(1));
+                        TerrainType.Texture, new Point(1));
                     if (recs.Count > 0)
                         break;
                 }
@@ -262,7 +262,7 @@ namespace InfiniteTerrain.GameObjects
         /// <param name="effect"></param>
         /// <param name="type">The type of the terrain.</param>
         protected void modifyTerrain(Texture2D texture, Vector2 pos, BlendState blendstate,
-            Effect effect, QuadTreeType type)
+            Effect effect, TerrainType type)
         {
             terrain.ApplyTexture(texture, pos, blendstate, effect, type);
         }

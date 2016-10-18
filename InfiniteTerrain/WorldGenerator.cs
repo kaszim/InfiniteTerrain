@@ -85,7 +85,7 @@ namespace InfiniteTerrain
                         break;
                 }
                 var rec = new Rectangle(((int)location.X) * terrain.ChunkWidth + x, ((int)location.Y) * terrain.ChunkHeight, 3, y);
-                terrain.ModifyQuadTree(rec, QuadTreeType.Empty);
+                terrain.ModifyQuadTree(rec, TerrainType.Empty);
             }
 
             terrain.ApplyTexture(renderTarget, new Vector2(location.X*terrain.ChunkWidth,

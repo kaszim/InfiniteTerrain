@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace InfiniteTerrain
 {
-    enum QuadTreeType
+    enum TerrainType
     {
         Empty,
         Texture
@@ -20,7 +20,7 @@ namespace InfiniteTerrain
         // The children of this node (if it is not a leaf).
         private QuadTree[] children;
         // The type of this node.
-        private QuadTreeType type;
+        private TerrainType type;
         // The area of this node.
         private readonly int area;
         // Wether or not this node is a leaf.
@@ -31,7 +31,7 @@ namespace InfiniteTerrain
         /// </summary>
         /// <param name="boundingRectangle">The rectangle which bounds the whole quadtree.</param>
         /// <param name="type">The inital type.</param>
-        public QuadTree(Rectangle boundingRectangle, QuadTreeType type)
+        public QuadTree(Rectangle boundingRectangle, TerrainType type)
         {
             rectangle = boundingRectangle;
             this.type = type;
@@ -82,7 +82,7 @@ namespace InfiniteTerrain
         /// <param name="searchRectangle">The rectangle to check against.</param>
         /// <param name="searchType">The type the leaves have to have.</param>
         /// <returns>Returns a list of all colliding rectangles.</returns>
-        public List<Rectangle> FindCollidingLeaves(Rectangle searchRectangle, QuadTreeType searchType)
+        public List<Rectangle> FindCollidingLeaves(Rectangle searchRectangle, TerrainType searchType)
         {
             var collidingRectangles = new List<Rectangle>();
             internalFindCollidingLeaves(ref collidingRectangles, searchRectangle, searchType);
@@ -90,7 +90,7 @@ namespace InfiniteTerrain
         }
 
         private void internalFindCollidingLeaves(ref List<Rectangle> rectangles,
-            Rectangle searchRectangle, QuadTreeType searchType)
+            Rectangle searchRectangle, TerrainType searchType)
         {
             if (rectangle.Intersects(searchRectangle))
             {
@@ -110,7 +110,7 @@ namespace InfiniteTerrain
         /// </summary>
         /// <param name="modifierRectangle">The rectangle to insert.</param>
         /// <param name="newType">The type of this rectangle.</param>
-        public void Insert(Rectangle modifierRectangle, QuadTreeType newType)
+        public void Insert(Rectangle modifierRectangle, TerrainType newType)
         {
             if (modifierRectangle.Contains(rectangle))
             {
@@ -144,7 +144,7 @@ namespace InfiniteTerrain
         {
             if(isLeaf)
                 C3.XNA.Primitives2D.DrawRectangle(spriteBatch, Camera.WorldToScreenRectangle(rectangle),
-                    type == QuadTreeType.Empty ? Color.Black : Color.Pink);
+                    type == TerrainType.Empty ? Color.Black : Color.Pink);
             else
                 foreach (var child in children)
                     child.Draw(spriteBatch);
