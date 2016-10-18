@@ -12,6 +12,8 @@ namespace InfiniteTerrain
     class TerrainGenerator
     {
         private static Random random = new Random();
+        private const int distanceBetweenBorders = 23;
+
         private GraphicsDevice graphicsDevice;
         private SpriteBatch spriteBatch;
         private RenderTarget2D renderTarget;
@@ -65,38 +67,34 @@ namespace InfiniteTerrain
             var colorData = new Color[renderTarget.Width * renderTarget.Height];
             renderTarget.GetData<Color>(colorData);
             var borderMeter = 0;
-            int prevY = -1;
+            var prevY = -1;
             var borders = new LinkedList<Vector3>();
             for (int x = 0; x < renderTarget.Width; x += 1)
             {
                 var pn = PerlinNoise.Get(new Vector3(0.001f*x, 5, 1)) * 1000;
+                // Carve out terrain
                 int y;
                 for (y = 0; y < pn; y++)
                         colorData[x + y * renderTarget.Width] = Color.Transparent;
-                if(borderMeter % (23) == 0 && prevY != -1)
+
+                // Determine where to put borders
+                if(borderMeter % distanceBetweenBorders == 0 && prevY != -1)
                 {
-                    var ang = (float)Math.Atan2(y - prevY, 20);
-                    borders.AddFirst(new Vector3(borderMeter - 20, prevY, ang));
+                    var ang = (float)Math.Atan2(y - prevY, distanceBetweenBorders);
+                    borders.AddFirst(new Vector3(borderMeter - distanceBetweenBorders, prevY, ang));
                     prevY = y;
                 }
                 else if(prevY == -1)
-                {
                     prevY = y;
-                }
 
                 borderMeter++;
-                /*for (; y < pn + 2; y++)
-                    colorData[x + y * renderTarget.Width] = new Color(147, 219, 36);
-                for (; y < pn + 10; y++)
-                    colorData[x + y * renderTarget.Width] = new Color(128, 190, 31);*/
             }
             renderTarget.SetData<Color>(colorData);
+            // put out borders
             spriteBatch.Begin();
             {
                 foreach(Vector3 vec in borders)
-                {
                     spriteBatch.Draw(border, position: new Vector2(vec.X, vec.Y-5), rotation: vec.Z);
-                }
 
             }
             spriteBatch.End();
