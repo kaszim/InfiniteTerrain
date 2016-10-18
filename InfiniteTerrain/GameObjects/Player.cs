@@ -77,26 +77,6 @@ namespace InfiniteTerrain.GameObjects
                     QuadTreeType.Empty);
             }
 
-            /*
-            // Drawing logic
-            var mouseState = Mouse.GetState();
-            var mousePos = Camera.ScreenToWorldPosition(new Vector2(mouseState.X, mouseState.Y));
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                // Get the center of the modifier
-                var center = new Vector2(mousePos.X - (texture.Width >> 1),
-                    mousePos.Y - (texture.Height >> 1));
-                ApplyTexture(texture, center, QuadTreeType.Empty);
-            }
-            else if (mouseState.RightButton == ButtonState.Pressed)
-            {
-                // Get the center of the modifier
-                var center = new Vector2(mousePos.X - (texture.Width >> 1),
-                    mousePos.Y - (texture.Height >> 1));
-                ApplyTexture(texture2, center, QuadTreeType.Texture);
-            }
-            */
-
             return true;
         }
 
