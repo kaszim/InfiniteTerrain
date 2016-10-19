@@ -12,6 +12,7 @@ namespace InfiniteTerrain
     class TerrainGenerator
     {
         private static Random random = new Random();
+        private static OpenSimplexNoise noise = new OpenSimplexNoise();
         private const int distanceBetweenBorders = 23;
 
         private GraphicsDevice graphicsDevice;
@@ -66,39 +67,53 @@ namespace InfiniteTerrain
             spriteBatch.End();
             var colorData = new Color[renderTarget.Width * renderTarget.Height];
             renderTarget.GetData<Color>(colorData);
-            var borderMeter = 0;
-            var prevY = -1;
-            var borders = new LinkedList<Vector3>();
+            var heightMap = new float[renderTarget.Width];
+
             for (int x = 0; x < renderTarget.Width; x += 1)
             {
-                var pn = PerlinNoise.Get(new Vector3(0.001f*x, 5, 1)) * 1000;
+                var pn = noise.Evaluate(0.001f * x, 1f) * 1000f + 500f;//PerlinNoise.Get(new Vector3(0.001f*x, 5, 1)) * 1000;
+                heightMap[x] = (int)pn + 1;
                 // Carve out terrain
                 int y;
                 for (y = 0; y < pn; y++)
-                        colorData[x + y * renderTarget.Width] = Color.Transparent;
-
-                // Determine where to put borders
-                if(borderMeter % distanceBetweenBorders == 0 && prevY != -1)
                 {
-                    var ang = (float)Math.Atan2(y - prevY, distanceBetweenBorders);
-                    borders.AddFirst(new Vector3(borderMeter - distanceBetweenBorders, prevY, ang));
-                    prevY = y;
+                    colorData[x + y * renderTarget.Width] = Color.Transparent;
                 }
-                else if(prevY == -1)
-                    prevY = y;
 
-                borderMeter++;
             }
             renderTarget.SetData<Color>(colorData);
-            // put out borders
             spriteBatch.Begin();
-            {
-                foreach(Vector3 vec in borders)
-                    spriteBatch.Draw(border, position: new Vector2(vec.X, vec.Y-5), rotation: vec.Z);
 
+            var X = renderTarget.Width-1;
+            while (X - 10 > 0)
+            {
+                var ang = (float)Math.Atan2(heightMap[X] - heightMap[X-10], 10);
+                var vec = new Vector2(distanceBetweenBorders, 0);
+                var mat = Matrix.CreateRotationZ(ang);
+                vec = Vector2.Transform(vec, mat);
+                var diff = (int)Math.Round(vec.X) - distanceBetweenBorders;
+                spriteBatch.Draw(border, position: new Vector2(X, heightMap[X] - 5), rotation: ang,
+                    origin: new Vector2(border.Width/2f, 0));
+                X -= diff + distanceBetweenBorders + 1;
             }
             spriteBatch.End();
-            graphicsDevice.SetRenderTarget(null);
+             /*
+             // put out borders
+             spriteBatch.Begin();
+             {
+                 // Determine where to put borders
+                 if(borderMeter % distanceBetweenBorders == 0 && prevY != -1)
+                 {
+                     var ang = (float)Math.Atan2(y - prevY, distanceBetweenBorders);
+                     borders.AddFirst(new Vector3(borderMeter - distanceBetweenBorders, prevY, ang));
+                     prevY = y;
+                 }
+                 foreach(Vector3 vec in borders)
+                     spriteBatch.Draw(border, position: new Vector2(vec.X, vec.Y-5), rotation: vec.Z);
+
+             }
+             spriteBatch.End();*/
+             graphicsDevice.SetRenderTarget(null);
 
             // Create the collider
             for (int x = 0; x < renderTarget.Width; x += 3)

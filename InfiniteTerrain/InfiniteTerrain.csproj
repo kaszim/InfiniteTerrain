@@ -52,6 +52,9 @@
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="GameObjects\Camera.cs" />
     <Compile Include="FrameCounter.cs" />
@@ -59,7 +62,7 @@
     <Compile Include="GameObjects\GameObject.cs" />
     <Compile Include="GameObjects\Player.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="PerlinNoise.cs" />
+    <Compile Include="OpenSimplexNoise.cs" />
     <Compile Include="Primitives2D.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

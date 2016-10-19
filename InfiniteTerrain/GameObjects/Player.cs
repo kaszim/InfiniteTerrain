@@ -32,6 +32,7 @@ namespace InfiniteTerrain.GameObjects
         private void Player_OnLoadContent(ContentManager content)
         {
             modifier = content.Load<Texture2D>("grassCenter_rounded");
+            modifyTerrain(modifier, new Vector2(600,1600), Terrain.InverseOpaque, null, TerrainType.Empty);
         }
 
         private bool Player_OnUpdate(GameTime gameTime)
