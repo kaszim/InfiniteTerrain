@@ -32,7 +32,6 @@ namespace InfiniteTerrain.GameObjects
         private void Player_OnLoadContent(ContentManager content)
         {
             modifier = content.Load<Texture2D>("grassCenter_rounded");
-            modifyTerrain(modifier, new Vector2(600,1600), Terrain.InverseOpaque, null, TerrainType.Empty);
         }
 
         private bool Player_OnUpdate(GameTime gameTime)
@@ -66,7 +65,7 @@ namespace InfiniteTerrain.GameObjects
                 // Get the center of the modifier
                 var center = new Vector2(Position.X - (Size.X >> 1),
                       Position.Y + (modifier.Height));
-                modifyTerrain(modifier, center, BlendState.AlphaBlend, null, TerrainType.Texture);
+                fillTerrain(modifier, center, TerrainType.Texture);
             }
 
             if (keyState.IsKeyDown(Keys.X))
@@ -74,7 +73,7 @@ namespace InfiniteTerrain.GameObjects
                 // Get the center of the modifier
                 var center = new Vector2(Position.X - (Size.X >> 1),
                       Position.Y + (modifier.Height));
-                modifyTerrain(modifier, center, Terrain.InverseOpaque, null, TerrainType.Empty);
+                removeTerrain(modifier, center);
             }
 
             var mouseState = Mouse.GetState();
@@ -84,14 +83,15 @@ namespace InfiniteTerrain.GameObjects
                 // Get the center of the modifier
                 var center = new Vector2(mousePos.X - (modifier.Width >> 1),
                     mousePos.Y - (modifier.Height >> 1));
-                modifyTerrain(modifier, center, Terrain.InverseOpaque, null, TerrainType.Empty);
+                removeTerrain(modifier, center);
             }
             else if (mouseState.RightButton == ButtonState.Pressed)
             {
                 // Get the center of the modifier
                 var center = new Vector2(mousePos.X - (modifier.Width >> 1),
                     mousePos.Y - (modifier.Height >> 1));
-                modifyTerrain(modifier, center, BlendState.AlphaBlend, null, TerrainType.Texture);
+                fillTerrain(modifier, center, TerrainType.Texture);
+
             }
 
             return true;

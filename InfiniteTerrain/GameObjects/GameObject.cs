@@ -254,6 +254,32 @@ namespace InfiniteTerrain.GameObjects
         }
 
         /// <summary>
+        /// Removes terrain with a specified texture. Filled colors equals removed pixels.
+        /// </summary>
+        /// <param name="texture">The texture to use.</param>
+        /// <param name="pos">Where the removal will be applied.</param>
+        protected void removeTerrain(Texture2D texture, Vector2 pos)
+        {
+            // five times to achieve sought effect
+            for (int i = 0; i < 5; i++)
+            {
+                modifyTerrain(texture, pos, Terrain.InverseOpaque, null, TerrainType.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Fills the terrain with the specified texture.
+        /// </summary>
+        /// <param name="texture">The texture to apply.</param>
+        /// <param name="pos">Where the texture will be applied.</param>
+        /// <param name="type">What type the area will have.</param>
+        protected void fillTerrain(Texture2D texture, Vector2 pos, TerrainType type)
+        {
+            modifyTerrain(texture, pos, BlendState.AlphaBlend, null, type);
+
+        }
+
+        /// <summary>
         /// Modifies the terrain if this gameobject is capable of it.
         /// </summary>
         /// <param name="texture">The texture to apply to the terrain.</param>
@@ -261,7 +287,7 @@ namespace InfiniteTerrain.GameObjects
         /// <param name="blendstate"></param>
         /// <param name="effect"></param>
         /// <param name="type">The type of the terrain.</param>
-        protected void modifyTerrain(Texture2D texture, Vector2 pos, BlendState blendstate,
+        private void modifyTerrain(Texture2D texture, Vector2 pos, BlendState blendstate,
             Effect effect, TerrainType type)
         {
             terrain.ApplyTexture(texture, pos, blendstate, effect, type);
