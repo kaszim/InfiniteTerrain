@@ -57,6 +57,7 @@ namespace InfiniteTerrain
         /// <param name="location">Which chunk to generate.</param>
         public void GenerateChunk(Vector2 location)
         {
+            // Fill the terrain with a tile
             graphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.Begin();
             {
@@ -66,13 +67,14 @@ namespace InfiniteTerrain
 
             }
             spriteBatch.End();
+
+            // Carve out terrain
             var colorData = new Color[renderTarget.Width * renderTarget.Height];
             renderTarget.GetData<Color>(colorData);
             heightMap = new float[renderTarget.Width];
-
             for (int x = 0; x < renderTarget.Width; x += 1)
             {
-                var pn = noise.Evaluate(0.001f * (x + location.X * Terrain.ChunkWidth), 1f) * 1000f + 1000f;//PerlinNoise.Get(new Vector3(0.001f*x, 5, 1)) * 1000;
+                var pn = noise.Evaluate(0.001f * (x + location.X * Terrain.ChunkWidth), 1f) * 500f + 1000f;
                 heightMap[x] = (int)pn;
                 // Carve out terrain
                 int y;
@@ -83,6 +85,9 @@ namespace InfiniteTerrain
 
             }
             renderTarget.SetData<Color>(colorData);
+
+            // Draw borders
+            //TODO: left-most border is not drawn
             spriteBatch.Begin();
             var X = renderTarget.Width-1;
             var startY = (int)location.Y * Terrain.ChunkHeight;
@@ -98,23 +103,7 @@ namespace InfiniteTerrain
                 X -= diff + distanceBetweenBorders + 1;
             }
             spriteBatch.End();
-             /*
-             // put out borders
-             spriteBatch.Begin();
-             {
-                 // Determine where to put borders
-                 if(borderMeter % distanceBetweenBorders == 0 && prevY != -1)
-                 {
-                     var ang = (float)Math.Atan2(y - prevY, distanceBetweenBorders);
-                     borders.AddFirst(new Vector3(borderMeter - distanceBetweenBorders, prevY, ang));
-                     prevY = y;
-                 }
-                 foreach(Vector3 vec in borders)
-                     spriteBatch.Draw(border, position: new Vector2(vec.X, vec.Y-5), rotation: vec.Z);
-
-             }
-             spriteBatch.End();*/
-             graphicsDevice.SetRenderTarget(null);
+            graphicsDevice.SetRenderTarget(null);
 
             // Create the collider
             for (int x = 0; x < renderTarget.Width; x += 3)
