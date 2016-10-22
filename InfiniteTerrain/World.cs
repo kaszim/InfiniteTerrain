@@ -44,7 +44,16 @@ namespace InfiniteTerrain
             terrain = new Terrain(graphicsDevice, size.X, size.Y);
             backgroundTerrain = new Terrain(graphicsDevice, size.X, size.Y);
             gameObjects = new HashSet<IGameObject>();
-            worldGenerator = new TerrainGenerator(backgroundTerrain, graphicsDevice);
+            var terrainTheme = new TerrainTheme
+            {
+                DistanceBetweenBorderReads = 10,
+                DistanceBetweenBorders = 23,
+                BorderOffsetTerrain = new Point(0, -5),
+                BorderTextureLocation = "h3",
+                OffsetBetweenBorders = 1,
+                FillTileLocation = "grassCenter"
+            };
+            worldGenerator = new TerrainGenerator(backgroundTerrain, graphicsDevice, terrainTheme);
         }
 
         /// <summary>

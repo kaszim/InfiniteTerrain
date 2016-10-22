@@ -9,19 +9,27 @@ using Microsoft.Xna.Framework.Content;
 
 namespace InfiniteTerrain
 {
+    class TerrainTheme
+    {
+        public string FillTileLocation { get; set; }
+        public string BorderTextureLocation { get; set; }
+        public int DistanceBetweenBorders { get; set; }
+        public int OffsetBetweenBorders { get; set; }
+        public Point BorderOffsetTerrain { get; set; }
+        public int DistanceBetweenBorderReads { get; set; }
+    }
+
     class TerrainGenerator
     {
         private static Random random = new Random();
         private static OpenSimplexNoise noise = new OpenSimplexNoise();
-        private const int distanceBetweenBorders = 23;
 
         private GraphicsDevice graphicsDevice;
-        private SpriteBatch spriteBatch;
         private RenderTarget2D renderTarget;
-        private Vector2 offset;
+        private TerrainTheme terrainTheme;
+        private SpriteBatch spriteBatch;
         private Texture2D tile;
         private Texture2D border;
-        private float[] heightMap;
 
         public Terrain Terrain { get; set; }
 
@@ -30,11 +38,13 @@ namespace InfiniteTerrain
         /// </summary>
         /// <param name="terrain">The world's terrain.</param>
         /// <param name="graphicsDevice">The GraphicsDevice.</param>
-        public TerrainGenerator(Terrain terrain, GraphicsDevice graphicsDevice)
+        /// <param name="terrainTheme">The theme to use for the terrain generator.</param>
+        public TerrainGenerator(Terrain terrain, GraphicsDevice graphicsDevice, 
+            TerrainTheme terrainTheme)
         {
             this.graphicsDevice = graphicsDevice;
             this.Terrain = terrain;
-            offset = new Vector2(10000f / random.Next(5000), 0);
+            this.terrainTheme = terrainTheme;
         }
 
         /// <summary>
@@ -47,8 +57,8 @@ namespace InfiniteTerrain
             spriteBatch = new SpriteBatch(graphicsDevice);
             renderTarget = new RenderTarget2D(graphicsDevice, Terrain.ChunkWidth,
                 Terrain.ChunkHeight);
-            tile = content.Load<Texture2D>("grassCenter");
-            border = content.Load<Texture2D>("h3");
+            tile = content.Load<Texture2D>(terrainTheme.FillTileLocation);
+            border = content.Load<Texture2D>(terrainTheme.BorderTextureLocation);
         }
 
         /// <summary>
@@ -71,7 +81,7 @@ namespace InfiniteTerrain
             // Carve out terrain
             var colorData = new Color[renderTarget.Width * renderTarget.Height];
             renderTarget.GetData<Color>(colorData);
-            heightMap = new float[renderTarget.Width];
+            var heightMap = new float[renderTarget.Width];
             for (int x = 0; x < renderTarget.Width; x += 1)
             {
                 var pn = noise.Evaluate(0.001f * (x + location.X * Terrain.ChunkWidth), 1f) * 500f + 1000f;
@@ -91,16 +101,20 @@ namespace InfiniteTerrain
             spriteBatch.Begin();
             var X = renderTarget.Width-1;
             var startY = (int)location.Y * Terrain.ChunkHeight;
-            while (X - 10 > 0 && heightMap[X] > startY)
+            while (X - terrainTheme.DistanceBetweenBorderReads > 0 && heightMap[X] > startY)
             {
-                var ang = (float)Math.Atan2(heightMap[X] - heightMap[X-10], 10);
-                var vec = new Vector2(distanceBetweenBorders, 0);
+                var ang = (float)Math.Atan2(
+                    heightMap[X] - heightMap[X - terrainTheme.DistanceBetweenBorderReads], 
+                    terrainTheme.DistanceBetweenBorderReads);
+                var vec = new Vector2(terrainTheme.DistanceBetweenBorders, 0);
                 var mat = Matrix.CreateRotationZ(ang);
                 vec = Vector2.Transform(vec, mat);
-                var diff = (int)Math.Round(vec.X) - distanceBetweenBorders;
-                spriteBatch.Draw(border, position: new Vector2(X, heightMap[X] - 5), rotation: ang,
-                    origin: new Vector2(border.Width/2f, 0));
-                X -= diff + distanceBetweenBorders + 1;
+                var diff = (int)Math.Round(vec.X) - terrainTheme.DistanceBetweenBorders;
+                spriteBatch.Draw(border, 
+                    position: new Vector2(X + terrainTheme.BorderOffsetTerrain.X,
+                    heightMap[X] + terrainTheme.BorderOffsetTerrain.Y), 
+                    rotation: ang, origin: new Vector2(border.Width/2f, 0));
+                X -= diff + terrainTheme.DistanceBetweenBorders + terrainTheme.OffsetBetweenBorders;
             }
             spriteBatch.End();
             graphicsDevice.SetRenderTarget(null);
