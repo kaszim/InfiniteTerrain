@@ -88,7 +88,7 @@ namespace InfiniteTerrain
                 heightMap[x] = (int)pn;
                 // Carve out terrain
                 int y;
-                for (y = (int)location.Y*Terrain.ChunkHeight; y < pn; y++)
+                for (y = (int)location.Y * Terrain.ChunkHeight; y < pn; y++)
                 {
                     colorData[x + y * renderTarget.Width] = Color.Transparent;
                 }
@@ -97,26 +97,37 @@ namespace InfiniteTerrain
             renderTarget.SetData<Color>(colorData);
 
             // Draw borders
-            //TODO: left-most border is not drawn
             spriteBatch.Begin();
-            var X = renderTarget.Width-1;
+            var X = renderTarget.Width - 1;
             var startY = (int)location.Y * Terrain.ChunkHeight;
             while (X - terrainTheme.DistanceBetweenBorderReads > 0 && heightMap[X] > startY)
             {
                 var ang = (float)Math.Atan2(
-                    heightMap[X] - heightMap[X - terrainTheme.DistanceBetweenBorderReads], 
+                    heightMap[X] - heightMap[X - terrainTheme.DistanceBetweenBorderReads],
                     terrainTheme.DistanceBetweenBorderReads);
                 var vec = new Vector2(terrainTheme.DistanceBetweenBorders, 0);
                 var mat = Matrix.CreateRotationZ(ang);
                 vec = Vector2.Transform(vec, mat);
                 var diff = (int)Math.Round(vec.X) - terrainTheme.DistanceBetweenBorders;
-                spriteBatch.Draw(border, 
+                spriteBatch.Draw(border,
                     position: new Vector2(X + terrainTheme.BorderOffsetTerrain.X,
-                    heightMap[X] + terrainTheme.BorderOffsetTerrain.Y), 
-                    rotation: ang, origin: new Vector2(border.Width/2f, 0));
+                    heightMap[X] + terrainTheme.BorderOffsetTerrain.Y),
+                    rotation: ang, origin: new Vector2(border.Width / 2f, 0));
                 X -= diff + terrainTheme.DistanceBetweenBorders + terrainTheme.OffsetBetweenBorders;
             }
+            // Draw the leftmost border
+            if (heightMap[0] > startY)
+            {
+                var ang2 = (float)Math.Atan2(
+                        heightMap[terrainTheme.DistanceBetweenBorderReads] - heightMap[0],
+                        terrainTheme.DistanceBetweenBorderReads);
+                spriteBatch.Draw(border,
+                    position: new Vector2(terrainTheme.BorderOffsetTerrain.X,
+                    heightMap[0] + terrainTheme.BorderOffsetTerrain.Y),
+                    rotation: ang2, origin: new Vector2(border.Width / 2f, 0));
+            }
             spriteBatch.End();
+            
             graphicsDevice.SetRenderTarget(null);
 
             // Create the collider
