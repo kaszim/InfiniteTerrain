@@ -225,8 +225,8 @@ namespace InfiniteTerrain
         public Terrain(GraphicsDevice graphicsDevice, int width, int height)
         {
             this.graphicsDevice = graphicsDevice;
-            chunkWidth = 70*100;
-            chunkHeight = 70*50;
+            chunkWidth = 70*50; // 70 because of tile width
+            chunkHeight = 70*25; // same TODO: remove hardcoding
             this.width = (int)Math.Ceiling((double)width/chunkWidth);
             this.height = (int)Math.Ceiling((double)height /chunkHeight);
             spriteBatch = new SpriteBatch(graphicsDevice);

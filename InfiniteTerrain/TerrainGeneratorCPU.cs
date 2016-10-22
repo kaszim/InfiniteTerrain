@@ -21,6 +21,7 @@ namespace InfiniteTerrain
         private Vector2 offset;
         private Texture2D tile;
         private Texture2D border;
+        private float[] heightMap;
 
         public Terrain Terrain { get; set; }
 
@@ -67,15 +68,15 @@ namespace InfiniteTerrain
             spriteBatch.End();
             var colorData = new Color[renderTarget.Width * renderTarget.Height];
             renderTarget.GetData<Color>(colorData);
-            var heightMap = new float[renderTarget.Width];
+            heightMap = new float[renderTarget.Width];
 
             for (int x = 0; x < renderTarget.Width; x += 1)
             {
-                var pn = noise.Evaluate(0.001f * x, 1f) * 1000f + 500f;//PerlinNoise.Get(new Vector3(0.001f*x, 5, 1)) * 1000;
-                heightMap[x] = (int)pn + 1;
+                var pn = noise.Evaluate(0.001f * (x + location.X * Terrain.ChunkWidth), 1f) * 1000f + 1000f;//PerlinNoise.Get(new Vector3(0.001f*x, 5, 1)) * 1000;
+                heightMap[x] = (int)pn;
                 // Carve out terrain
                 int y;
-                for (y = 0; y < pn; y++)
+                for (y = (int)location.Y*Terrain.ChunkHeight; y < pn; y++)
                 {
                     colorData[x + y * renderTarget.Width] = Color.Transparent;
                 }
@@ -83,9 +84,9 @@ namespace InfiniteTerrain
             }
             renderTarget.SetData<Color>(colorData);
             spriteBatch.Begin();
-
             var X = renderTarget.Width-1;
-            while (X - 10 > 0)
+            var startY = (int)location.Y * Terrain.ChunkHeight;
+            while (X - 10 > 0 && heightMap[X] > startY)
             {
                 var ang = (float)Math.Atan2(heightMap[X] - heightMap[X-10], 10);
                 var vec = new Vector2(distanceBetweenBorders, 0);

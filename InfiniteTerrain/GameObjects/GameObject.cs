@@ -261,7 +261,7 @@ namespace InfiniteTerrain.GameObjects
         protected void removeTerrain(Texture2D texture, Vector2 pos)
         {
             // five times to achieve sought effect
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 6; i++)
             {
                 modifyTerrain(texture, pos, Terrain.InverseOpaque, null, TerrainType.Empty);
             }
