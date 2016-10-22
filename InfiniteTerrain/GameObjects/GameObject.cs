@@ -191,7 +191,7 @@ namespace InfiniteTerrain.GameObjects
                 for (i = 1; i < 50; i++)
                 {
                     recs = terrain.GetCollidingRectangles(
-                        new Rectangle(Rectangle.X + (Rectangle.Width >> 1), Rectangle.Y + Rectangle.Height, 1, i),
+                        new Rectangle(Rectangle.X, Rectangle.Y + Rectangle.Height, Rectangle.Width, i),
                         TerrainType.Texture, new Point(1));
                     if (recs.Count > 0)
                         break;
