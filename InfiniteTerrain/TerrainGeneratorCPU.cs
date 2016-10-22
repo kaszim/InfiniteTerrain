@@ -62,6 +62,21 @@ namespace InfiniteTerrain
         }
 
         /// <summary>
+        /// Generate an area of terrain.
+        /// </summary>
+        /// <param name="rectangle">The surrounding rectangle (inclusive).</param>
+        public void GenerateArea(Rectangle rectangle)
+        {
+            for (int x = rectangle.X; x < (rectangle.X + rectangle.Width); x++)
+            {
+                for (int y = rectangle.Y; y < (rectangle.Y + rectangle.Height); y++)
+                {
+                    GenerateChunk(new Vector2(x, y));
+                }
+            }
+        }
+
+        /// <summary>
         /// Generates the specified chunk.
         /// </summary>
         /// <param name="location">Which chunk to generate.</param>
@@ -95,8 +110,21 @@ namespace InfiniteTerrain
 
             }
             renderTarget.SetData<Color>(colorData);
+            colorData = null;
 
             // Draw borders
+            drawBorders(location, heightMap);
+            graphicsDevice.SetRenderTarget(null);
+
+            // Create the collider
+            createCollider(location);
+
+            Terrain.ApplyTexture(renderTarget, new Vector2(location.X*Terrain.ChunkWidth,
+                location.Y*Terrain.ChunkHeight), BlendState.Opaque, null);
+        }
+
+        private void drawBorders(Vector2 location, float[] heightMap)
+        {
             spriteBatch.Begin();
             var X = renderTarget.Width - 1;
             var startY = (int)location.Y * Terrain.ChunkHeight;
@@ -127,10 +155,13 @@ namespace InfiniteTerrain
                     rotation: ang2, origin: new Vector2(border.Width / 2f, 0));
             }
             spriteBatch.End();
-            
-            graphicsDevice.SetRenderTarget(null);
 
-            // Create the collider
+        }
+
+        private void createCollider(Vector2 location)
+        {
+            var colorData = new Color[renderTarget.Width * renderTarget.Height];
+            renderTarget.GetData<Color>(colorData);
             for (int x = 0; x < renderTarget.Width; x += 3)
             {
                 // Find the pixel which is not a color
@@ -144,24 +175,7 @@ namespace InfiniteTerrain
                 Terrain.ModifyQuadTree(rec, TerrainType.Empty);
             }
             colorData = null;
-
-            Terrain.ApplyTexture(renderTarget, new Vector2(location.X*Terrain.ChunkWidth,
-                location.Y*Terrain.ChunkHeight), BlendState.Opaque, null);
         }
 
-        /// <summary>
-        /// Generate an area of terrain.
-        /// </summary>
-        /// <param name="rectangle">The surrounding rectangle (inclusive).</param>
-        public void GenerateArea(Rectangle rectangle)
-        {
-            for (int x = rectangle.X; x < (rectangle.X + rectangle.Width); x++)
-            {
-                for (int y = rectangle.Y; y < (rectangle.Y + rectangle.Height); y++)
-                {
-                    GenerateChunk(new Vector2(x, y));
-                }
-            }
-        }
     }
 }
