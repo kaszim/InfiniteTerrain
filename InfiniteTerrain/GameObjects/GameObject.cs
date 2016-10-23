@@ -63,15 +63,20 @@ namespace InfiniteTerrain.GameObjects
     abstract class GameObject : IGameObject
     {
         // The gravity factor (how much pull there is on the object)
-        protected float gravityFactor = 1000f;
+        protected float gravityFactor = 200f;
         // The dampening factor, e.g how much friction the air is making
-        private float dampeningFactor = 8f;
+        private float dampeningFactor = 0.5f;
         // The World's terrain object
         private Terrain terrain;
         // The world
         private World world;
-        // The distance to the terrain.
+        /// <summary>
+        /// The distance to the terrain from the gameobject's feet. If the distance is 50, it means
+        /// it is actually 50 or more. 
+        /// </summary>
         private int distanceToTerrain;
+        // The distance from the feet to the terrain we want
+        private float distanceFromTerrain;
 
         /// <summary>
         /// Called before the Initialization of a game object.
@@ -84,9 +89,14 @@ namespace InfiniteTerrain.GameObjects
         /// <summary>
         /// Called before any other update logic.
         /// Return false to stop the rest of the update logic of running.
-        /// This also stops other events within the OnUpdate from invoking.
+        /// This also stops other events within the OnPreUpdate from invoking.
         /// </summary>
-        public event Func<GameTime, bool> OnUpdate;
+        public event Func<GameTime, bool> OnPreUpdate;
+        /// <summary>
+        /// Called after any other update logic.
+        /// Can be stopped if OnPreUpdate has returned false.
+        /// </summary>
+        public event Action<GameTime> OnPostUpdate;
         /// <summary>
         /// Called before any other update logic.
         /// Return false to stop the rest of the update logic of running.
@@ -110,38 +120,34 @@ namespace InfiniteTerrain.GameObjects
         /// The GameObject's bounding rectangle.
         /// </summary>
         public Rectangle Rectangle => new Rectangle((int)Position.X, (int)Position.Y, Size.X, Size.Y);
+        
         /// <summary>
-        /// Wether or not to measure the distance to the terrain. Default is false.
+        /// The distance from the gameobject's feet to the terrain we want.
         /// </summary>
-        public bool MeasureDistanceToTerrain { get; set; }
-        /// <summary>
-        /// The distance to the terrain from the gameobject's feet. If the distance is 50, it means
-        /// it is actually 50 or more. If the measuring is off, the distance will be set to -1.
-        /// </summary>
-        public int DistanceToTerrain
+        public float DistanceFromTerrain
         {
             get
             {
-                if (MeasureDistanceToTerrain)
-                    return distanceToTerrain;
-                else
-                    return -1;
+                return distanceFromTerrain;
             }
 
-            private set
+            set
             {
-                distanceToTerrain = value;
+                if (value > 50)
+                    distanceFromTerrain = 50;
+                else
+                    distanceFromTerrain = value;
             }
         }
 
         Terrain IGameObject.Terrain => terrain;
         World IGameObject.World => world;
 
+
         void IGameObject.Initialize(Terrain terrain, World world)
         {
             this.terrain = terrain;
             this.world = world;
-            this.MeasureDistanceToTerrain = false;
             OnInitialize?.Invoke();
         }
 
@@ -156,11 +162,12 @@ namespace InfiniteTerrain.GameObjects
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         void IGameObject.Update(GameTime gameTime)
         {
-            if (OnUpdate != null)
-                foreach (Func<GameTime, bool> delg in OnUpdate.GetInvocationList())
+            if (OnPreUpdate != null)
+                foreach (Func<GameTime, bool> delg in OnPreUpdate.GetInvocationList())
                     if (!delg.Invoke(gameTime))
                         return;
             updatePhysics(gameTime);
+            OnPostUpdate?.Invoke(gameTime);
         }
 
         /// <summary>
@@ -169,13 +176,7 @@ namespace InfiniteTerrain.GameObjects
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void updatePhysics(GameTime gameTime)
         {
-            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Velocity = new Vector2(
-                Velocity.X - Velocity.X * dampeningFactor * deltaTime,
-                (Velocity.Y - Velocity.Y * dampeningFactor * deltaTime + gravityFactor * deltaTime));
-
             // Collision
-            Position += Velocity * deltaTime;
             // TODO: Change search quadrants
             var recs = terrain.GetCollidingRectangles(Rectangle, TerrainType.Texture, new Point(1));
             foreach (Rectangle other in recs)
@@ -183,21 +184,38 @@ namespace InfiniteTerrain.GameObjects
                 solveCollsion(other);
             }
 
+            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            
+            Velocity = new Vector2(
+                Velocity.X,
+                Velocity.Y + gravityFactor * deltaTime);
+
+            Velocity *= (float)Math.Pow(dampeningFactor, deltaTime);
+
+            if (distanceToTerrain < distanceFromTerrain)
+            {
+                //var y = ((float)DistanceToTerrain) / 25f;
+                //var x = (int)MathHelper.LerpPrecise(-2f * gravityFactor, 0f, y);
+                //var F = (DistanceToTerrain - 20) * 100f;
+
+                //Velocity = new Vector2(Velocity.X, Velocity.Y + F * deltaTime);
+                Position = new Vector2(Position.X, Position.Y + (distanceToTerrain - distanceFromTerrain) * deltaTime * 100);
+            }
+
+            Position += Velocity * deltaTime;
             // Distance to terrain from feet
             // TODO: Better distance measuring
-            if (MeasureDistanceToTerrain)
+            int i;
+            for (i = 0; i < 50; i++)
             {
-                int i;
-                for (i = 1; i < 50; i++)
-                {
-                    recs = terrain.GetCollidingRectangles(
-                        new Rectangle(Rectangle.X, Rectangle.Y + Rectangle.Height, Rectangle.Width, i),
-                        TerrainType.Texture, new Point(1));
-                    if (recs.Count > 0)
-                        break;
-                }
-                DistanceToTerrain = i;
+                recs = terrain.GetCollidingRectangles(
+                    new Rectangle(Rectangle.X, Rectangle.Y + Rectangle.Height, Rectangle.Width, i + 1),
+                    TerrainType.Texture, new Point(1));
+                if (recs.Count > 0)
+                    break;
             }
+            distanceToTerrain = i;
+            
         }
 
         private void solveCollsion(Rectangle other)
@@ -210,34 +228,18 @@ namespace InfiniteTerrain.GameObjects
                 dx = other.X + other.Size.X - Position.X;
             else
                 dx = other.X - Position.X - Rectangle.Width;
+            //dx = (float)Math.Round(dx);
             // same thing here but with dy
             if (dCenter.Y > 0)
                 dy = other.Y + other.Size.Y - Position.Y;
             else
                 dy = other.Y - Position.Y - Rectangle.Height;
+            //dy = (float)Math.Round(dy);
             // Whichever of the d's are smallest should be solved first, leave the other for
             // next update
             var absdx = Math.Abs(dx);
             var absdy = Math.Abs(dy);
-            Vector2 dPos;
-            if (absdx > absdy)
-            {
-                dPos = new Vector2(0, dy);
-                Velocity = new Vector2(Velocity.X, 0);
-            }
-            else
-            {
-                // if the collider is less than an amoutn step onto it
-                if (absdy <= 1f)
-                {
-                    dPos = new Vector2(0, dy);
-                }
-                else
-                {
-                    dPos = new Vector2(dx, 0);
-                    //Velocity = new Vector2(0, Velocity.Y); cant remember :(
-                }
-            }
+            var dPos = absdx > absdy ? new Vector2(0, dy) : new Vector2(dx, 0);
             Position += dPos;
         }
 

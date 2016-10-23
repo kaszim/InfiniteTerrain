@@ -15,6 +15,7 @@ namespace InfiniteTerrain
         private readonly GraphicsDeviceManager graphics;
         private readonly FrameCounter fc;
         private World world;
+        private KeyboardState oldKeyState;
 
         public static GameWindow gWindow;
 
@@ -87,12 +88,14 @@ namespace InfiniteTerrain
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             var keyState = Keyboard.GetState();
-            if (keyState.IsKeyDown(Keys.Q))
+            if (keyState.IsKeyDown(Keys.Q) && oldKeyState.IsKeyUp(Keys.Q))
                 world.Debug = !world.Debug;
+
+            oldKeyState = keyState;
 
             world.Update(gameTime);
             fc.Update(deltaTime);
-            Window.Title = $"FPS {fc.AverageFramesPerSecond}";
+            //Window.Title = $"FPS {fc.AverageFramesPerSecond}";
             //Window.Title = $" {Camera.ActiveCamera.Position}";
             base.Update(gameTime);
         }

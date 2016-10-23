@@ -46,7 +46,7 @@ namespace InfiniteTerrain
             Position = Vector2.Zero;
             Size = cameraSize;
             worldSize = wSize;
-            OnUpdate += Camera_OnUpdate;
+            OnPreUpdate += Camera_OnUpdate;
         }
 
         private bool Camera_OnUpdate(GameTime arg)

@@ -9,38 +9,29 @@ namespace InfiniteTerrain.GameObjects
     class Player : GameObject
     {
         // Acceleration of this player
-        private float acceleration = 2000f;
+        private float acceleration = 200f;
         private Texture2D modifier;
-        private Effect modifierEffect;
+        private Texture2D playerSprite;
 
         public Player()
         {
-            OnUpdate += Player_OnUpdate;
-            OnInitialize += Player_OnInitialize;
+            OnPostUpdate += Player_OnUpdate;
             OnLoadContent += Player_OnLoadContent;
             OnDraw += Player_OnDraw;
             Position = new Vector2(300);
-            Size = new Point(25, 75);
-        }
-
-
-        private void Player_OnInitialize()
-        {
-            MeasureDistanceToTerrain = true;
+            DistanceFromTerrain = 20f;
         }
 
         private void Player_OnLoadContent(ContentManager content)
         {
             modifier = content.Load<Texture2D>("grassCenter_rounded");
+            playerSprite = content.Load<Texture2D>("p1_stand");
+            Size = new Point(playerSprite.Width, playerSprite.Height - 20);
         }
 
-        private bool Player_OnUpdate(GameTime gameTime)
+        private void Player_OnUpdate(GameTime gameTime)
         {
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            var y = ((float)DistanceToTerrain) / 50f;
-            var x = (int)MathHelper.LerpPrecise(-gravityFactor, gravityFactor, y) * 2f;
-            Velocity = new Vector2(Velocity.X, Velocity.Y + x * deltaTime - gravityFactor * deltaTime);
 
             var keyState = Keyboard.GetState();
             if (keyState.IsKeyDown(Keys.Right))
@@ -94,12 +85,13 @@ namespace InfiniteTerrain.GameObjects
 
             }
 
-            return true;
+            //return true;
         }
 
         private bool Player_OnDraw(SpriteBatch arg)
         {
-            C3.XNA.Primitives2D.FillRectangle(arg, Camera.WorldToScreenPosition(Position), new Vector2(Size.X, Size.Y), Color.BlueViolet);
+            arg.Draw(playerSprite, Camera.WorldToScreenPosition(Position), Color.White);
+            //C3.XNA.Primitives2D.FillRectangle(arg, Camera.WorldToScreenPosition(Position), new Vector2(Size.X, Size.Y), Color.BlueViolet);
             return true;
         }
 
