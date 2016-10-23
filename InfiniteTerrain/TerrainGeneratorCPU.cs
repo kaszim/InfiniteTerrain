@@ -82,6 +82,7 @@ namespace InfiniteTerrain
         /// <param name="location">Which chunk to generate.</param>
         public void GenerateChunk(Vector2 location)
         {
+
             // Fill the terrain with a tile
             graphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.Begin();
@@ -144,11 +145,11 @@ namespace InfiniteTerrain
                 X -= diff + terrainTheme.DistanceBetweenBorders + terrainTheme.OffsetBetweenBorders;
             }
             // Draw the leftmost border
-            if (heightMap[0] > startY)
+            if (X >= 0 && heightMap[X] > startY)
             {
                 var ang2 = (float)Math.Atan2(
-                        heightMap[terrainTheme.DistanceBetweenBorderReads] - heightMap[0],
-                        terrainTheme.DistanceBetweenBorderReads);
+                        heightMap[X] - heightMap[0],
+                        X);
                 spriteBatch.Draw(border,
                     position: new Vector2(terrainTheme.BorderOffsetTerrain.X,
                     heightMap[0] + terrainTheme.BorderOffsetTerrain.Y),

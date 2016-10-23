@@ -27,15 +27,15 @@ namespace InfiniteTerrain.GameObjects
 
         private void Player_OnInitialize()
         {
-            Position = new Vector2(300);
+            Position = new Vector2(5000, 500);
         }
 
         private void Player_OnLoadContent(ContentManager content)
         {
             modifier = content.Load<Texture2D>("grassCenter_rounded");
             playerSprite = content.Load<Texture2D>("player_yellow");
-            Size = new Point((int)(playerSprite.Width * 0.8), (int)(playerSprite.Height * 0.8));
-            Origin = new Vector2((playerSprite.Width >> 1) * 0.8f, (playerSprite.Height >> 1) * 0.8f);
+            Size = new Point((int)(playerSprite.Width * 0.7), (int)(playerSprite.Height * 0.7));
+            Origin = new Vector2((playerSprite.Width >> 1) * 0.7f, (playerSprite.Height >> 1) * 0.7f);
         }
 
         private bool Player_OnUpdate(GameTime gameTime)
@@ -99,12 +99,12 @@ namespace InfiniteTerrain.GameObjects
             Velocity *= (float)Math.Pow(dampeningFactor, deltaTime);
             Position += Velocity * deltaTime;
 
-            return false;
+            return true;
         }
 
         private bool Player_OnDraw(SpriteBatch arg)
         {
-            arg.Draw(playerSprite, Camera.WorldToScreenPosition(position), null, Color.White, angle, Origin, 0.8f, SpriteEffects.None, 0f);
+            arg.Draw(playerSprite, Camera.WorldToScreenPosition(position), null, Color.White, angle, Origin, 0.7f, SpriteEffects.None, 0f);
             //C3.XNA.Primitives2D.FillRectangle(arg, Camera.WorldToScreenPosition(Position), new Vector2(Size.X, Size.Y), Color.BlueViolet);
             return true;
         }
