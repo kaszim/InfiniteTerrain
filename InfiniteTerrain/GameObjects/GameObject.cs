@@ -120,7 +120,33 @@ namespace InfiniteTerrain.GameObjects
         /// The GameObject's bounding rectangle.
         /// </summary>
         public Rectangle Rectangle => new Rectangle((int)Position.X, (int)Position.Y, Size.X, Size.Y);
-        
+        /// <summary>
+        /// Wether or not to stick to the ground at a specific height.
+        /// </summary>
+        public bool MagneticFeet { get; set; }
+        /// <summary>
+        /// Wether or not to measure the distance to the terrain. Default is false.
+        /// </summary>
+        public bool MeasureDistanceToTerrain { get; set; }
+        /// <summary>
+        /// The distance to the terrain from the gameobject's feet. If the distance is 50, it means
+        /// it is actually 50 or more. If the measuring is off, the distance will be set to 50.
+        /// </summary>
+        public int DistanceToTerrain
+        {
+            get
+            {
+                if (MeasureDistanceToTerrain)
+                    return distanceToTerrain;
+                else
+                    return 50;
+            }
+
+            private set
+            {
+                distanceToTerrain = value;
+            }
+        }
         /// <summary>
         /// The distance from the gameobject's feet to the terrain we want.
         /// </summary>
@@ -148,6 +174,8 @@ namespace InfiniteTerrain.GameObjects
         {
             this.terrain = terrain;
             this.world = world;
+            this.MagneticFeet = true;
+            this.MeasureDistanceToTerrain = true;
             OnInitialize?.Invoke();
         }
 
@@ -192,29 +220,27 @@ namespace InfiniteTerrain.GameObjects
 
             Velocity *= (float)Math.Pow(dampeningFactor, deltaTime);
 
-            if (distanceToTerrain < distanceFromTerrain)
+            if (MagneticFeet && DistanceToTerrain < distanceFromTerrain)
             {
-                //var y = ((float)DistanceToTerrain) / 25f;
-                //var x = (int)MathHelper.LerpPrecise(-2f * gravityFactor, 0f, y);
-                //var F = (DistanceToTerrain - 20) * 100f;
-
-                //Velocity = new Vector2(Velocity.X, Velocity.Y + F * deltaTime);
-                Position = new Vector2(Position.X, Position.Y + (distanceToTerrain - distanceFromTerrain) * deltaTime * 100);
+                Position = new Vector2(Position.X, Position.Y + (DistanceToTerrain - distanceFromTerrain) * deltaTime * 100);
             }
 
             Position += Velocity * deltaTime;
-            // Distance to terrain from feet
-            // TODO: Better distance measuring
-            int i;
-            for (i = 0; i < 50; i++)
+            if (MeasureDistanceToTerrain)
             {
-                recs = terrain.GetCollidingRectangles(
-                    new Rectangle(Rectangle.X, Rectangle.Y + Rectangle.Height, Rectangle.Width, i + 1),
-                    TerrainType.Texture, new Point(1));
-                if (recs.Count > 0)
-                    break;
+                // Distance to terrain from feet
+                // TODO: Better distance measuring
+                int i;
+                for (i = 0; i < 50; i++)
+                {
+                    recs = terrain.GetCollidingRectangles(
+                        new Rectangle(Rectangle.X, Rectangle.Y + Rectangle.Height, Rectangle.Width, i + 1),
+                        TerrainType.Texture, new Point(1));
+                    if (recs.Count > 0)
+                        break;
+                }
+                distanceToTerrain = i;
             }
-            distanceToTerrain = i;
             
         }
 
