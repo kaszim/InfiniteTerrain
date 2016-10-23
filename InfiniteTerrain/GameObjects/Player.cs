@@ -9,27 +9,36 @@ namespace InfiniteTerrain.GameObjects
     class Player : GameObject
     {
         // Acceleration of this player
-        private float acceleration = 200f;
+        private float acceleration = 1000f;
+        private float maxVelocity = 2000f;
         private Texture2D modifier;
         private Texture2D playerSprite;
+        private float angle;
 
         public Player()
         {
-            OnPostUpdate += Player_OnUpdate;
+            OnPreUpdate += Player_OnUpdate;
+            OnInitialize += Player_OnInitialize;
             OnLoadContent += Player_OnLoadContent;
             OnDraw += Player_OnDraw;
+            MagneticFeet = false;
+        }
+
+
+        private void Player_OnInitialize()
+        {
             Position = new Vector2(300);
-            DistanceFromTerrain = 20f;
         }
 
         private void Player_OnLoadContent(ContentManager content)
         {
             modifier = content.Load<Texture2D>("grassCenter_rounded");
-            playerSprite = content.Load<Texture2D>("p1_stand");
-            Size = new Point(playerSprite.Width, playerSprite.Height - 20);
+            playerSprite = content.Load<Texture2D>("player_yellow");
+            Size = new Point((int)(playerSprite.Width * 0.8), (int)(playerSprite.Height * 0.8));
+            Origin = new Vector2((playerSprite.Width >> 1) * 0.8f, (playerSprite.Height >> 1) * 0.8f);
         }
 
-        private void Player_OnUpdate(GameTime gameTime)
+        private bool Player_OnUpdate(GameTime gameTime)
         {
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -85,12 +94,17 @@ namespace InfiniteTerrain.GameObjects
 
             }
 
-            //return true;
+            Velocity = new Vector2(Math.Min(Velocity.X, maxVelocity), Math.Min(Velocity.Y, maxVelocity)); 
+            angle = MathHelper.Lerp(0, (float)Math.PI, Velocity.X / maxVelocity);
+            Velocity *= (float)Math.Pow(dampeningFactor, deltaTime);
+            Position += Velocity * deltaTime;
+
+            return false;
         }
 
         private bool Player_OnDraw(SpriteBatch arg)
         {
-            arg.Draw(playerSprite, Camera.WorldToScreenPosition(Position), Color.White);
+            arg.Draw(playerSprite, Camera.WorldToScreenPosition(position), null, Color.White, angle, Origin, 0.8f, SpriteEffects.None, 0f);
             //C3.XNA.Primitives2D.FillRectangle(arg, Camera.WorldToScreenPosition(Position), new Vector2(Size.X, Size.Y), Color.BlueViolet);
             return true;
         }

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace InfiniteTerrain.GameObjects
 {
@@ -62,10 +63,6 @@ namespace InfiniteTerrain.GameObjects
     /// </summary>
     abstract class GameObject : IGameObject
     {
-        // The gravity factor (how much pull there is on the object)
-        protected float gravityFactor = 200f;
-        // The dampening factor, e.g how much friction the air is making
-        private float dampeningFactor = 0.5f;
         // The World's terrain object
         private Terrain terrain;
         // The world
@@ -77,6 +74,10 @@ namespace InfiniteTerrain.GameObjects
         private int distanceToTerrain;
         // The distance from the feet to the terrain we want
         private float distanceFromTerrain;
+        // 
+        protected Vector2 position;
+        // The dampening factor, e.g how much friction the air is making
+        protected float dampeningFactor = 0.2f;
 
         /// <summary>
         /// Called before the Initialization of a game object.
@@ -104,6 +105,7 @@ namespace InfiniteTerrain.GameObjects
         /// </summary>
         public event Func<SpriteBatch, bool> OnDraw;
 
+        public Vector2 Origin { get; set; }
         /// <summary>
         /// The GameObject's size.
         /// </summary>
@@ -111,7 +113,17 @@ namespace InfiniteTerrain.GameObjects
         /// <summary>
         /// The GameObject's position in the world.
         /// </summary>
-        public Vector2 Position { get; set; }
+        public Vector2 Position
+        {
+            get
+            {
+                return position - Origin;
+            }
+            set
+            {
+                position = value + Origin;
+            }
+        }
         /// <summary>
         /// The GameObject's velocity. In pixels/second
         /// </summary>
@@ -213,10 +225,6 @@ namespace InfiniteTerrain.GameObjects
             }
 
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            
-            Velocity = new Vector2(
-                Velocity.X,
-                Velocity.Y + gravityFactor * deltaTime);
 
             Velocity *= (float)Math.Pow(dampeningFactor, deltaTime);
 
@@ -279,6 +287,11 @@ namespace InfiniteTerrain.GameObjects
                 foreach (Func<SpriteBatch, bool> delg in OnDraw.GetInvocationList())
                     if (!delg.Invoke(spriteBatch))
                         return;
+        }
+
+        protected List<Rectangle> terrainCollisionTest()
+        {
+            return terrain.GetCollidingRectangles(Rectangle, TerrainType.Texture, new Point(1));
         }
 
         /// <summary>
